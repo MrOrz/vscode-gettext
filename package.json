@@ -1,5 +1,5 @@
 {
-    "name": "gettext",
+    "name": "language-gettext",
     "displayName": "gettext",
     "description": "Gettext PO files language support for Visual Studio Code",
     "version": "0.0.1",
