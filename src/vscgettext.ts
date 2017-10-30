@@ -1,3 +1,7 @@
+/**
+ * This module is the main entry point of vscode-gettext extension
+ */
+
 import * as vscode from 'vscode';
 
 const msgidStartRgx = /^msgid\s+"(.*?)"\s*$/;
@@ -5,50 +9,44 @@ const msgstrStartRgx =  /^msgstr\s+"(.*?)"\s*$/;
 const msgctxtStartRgx =  /^msgctxt\s+"(.*?)"\s*$/;
 const continuationLineRgx = /^"(.*?)\s*"$/;
 
-
-interface Message {
-    msgid: string,
-    msgidLine: number,
-    msgstr: string,
-    msgstrLine: number,
-    msgctxt: string,
-    msgctxtLine: number,
-    firstline: number,
-    lastline: number,
+interface IMessage {
+    msgid: string;
+    msgidLine: number;
+    msgstr: string;
+    msgstrLine: number;
+    msgctxt: string;
+    msgctxtLine: number;
+    firstline: number;
+    lastline: number;
 }
 
-
-export function moveCursorTo(editor: vscode.TextEditor, lineno: number, colno=0): vscode.Position {
+export function moveCursorTo(editor: vscode.TextEditor, lineno: number, colno = 0): vscode.Position {
     const position = new vscode.Position(lineno, colno);
     editor.selection = new vscode.Selection(position, position);
     return position;
 }
 
-
-function focusOnMessage(editor: vscode.TextEditor, message: Message) {
+function focusOnMessage(editor: vscode.TextEditor, message: IMessage) {
     const position = moveCursorTo(editor, message.msgstrLine, 8);
     editor.revealRange(
-        new vscode.Range(position, position), 
+        new vscode.Range(position, position),
         vscode.TextEditorRevealType.InCenterIfOutsideViewport
     );
 }
 
-
-function *documentLines(document: vscode.TextDocument, startline=1) {
-    for (let lineno=startline; lineno < document.lineCount; lineno++) {
+function *documentLines(document: vscode.TextDocument, startline = 1) {
+    for (let lineno = startline; lineno < document.lineCount; lineno++) {
         yield document.lineAt(lineno);
     }
 }
 
-
-function *backwardDocumentLines(document: vscode.TextDocument, startline=document.lineCount - 1) {
-    for (let lineno=startline; lineno >= 0; lineno--) {
+function *backwardDocumentLines(document: vscode.TextDocument, startline = document.lineCount - 1) {
+    for (let lineno = startline; lineno >= 0; lineno--) {
         yield document.lineAt(lineno);
     }
 }
 
-
-function nextMessage(document: vscode.TextDocument, currentMessage: Message): Message {
+function nextMessage(document: vscode.TextDocument, currentMessage: IMessage): IMessage {
     for (const line of documentLines(document, currentMessage.lastline + 1)) {
         if (line.text && !line.text.trim().startsWith('#')) {
             return currentMessageDefinition(document, line.lineNumber);
@@ -57,8 +55,7 @@ function nextMessage(document: vscode.TextDocument, currentMessage: Message): Me
     return null;
 }
 
-
-function previousMessage(document: vscode.TextDocument, currentMessage: Message): Message {
+function previousMessage(document: vscode.TextDocument, currentMessage: IMessage): IMessage {
     for (const line of backwardDocumentLines(document, currentMessage.firstline - 1)) {
         if (line.text && !line.text.trim().startsWith('#')) {
             return currentMessageDefinition(document, line.lineNumber);
@@ -66,8 +63,6 @@ function previousMessage(document: vscode.TextDocument, currentMessage: Message)
     }
     return null;
 }
-
-
 
 function currentMessageStart(document: vscode.TextDocument, currentLine: number): vscode.TextLine {
     let msgidLine = null;
@@ -96,15 +91,14 @@ function currentMessageStart(document: vscode.TextDocument, currentLine: number)
     return msgidLine;
 }
 
-
-export function currentMessageDefinition(document: vscode.TextDocument, currentline: number): Message {
+export function currentMessageDefinition(document: vscode.TextDocument, currentline: number): IMessage {
     const firstline = currentMessageStart(document, currentline);
     if (firstline === null) {
         return null;
     }
-    
+
     let currentProperty;
-    const message: Message = {
+    const message: IMessage = {
         msgid: null,
         msgidLine: null,
         msgstr: null,
@@ -153,8 +147,7 @@ export function currentMessageDefinition(document: vscode.TextDocument, currentl
     return message;
 }
 
-
-function nextUntranslatedMessage(document: vscode.TextDocument, lineno: number, backwards=false): Message {
+function nextUntranslatedMessage(document: vscode.TextDocument, lineno: number, backwards = false): IMessage {
     let message = currentMessageDefinition(document, lineno);
     const messageIterator = backwards ? previousMessage : nextMessage;
     while (message !== null) {
@@ -166,26 +159,21 @@ function nextUntranslatedMessage(document: vscode.TextDocument, lineno: number, 
     return null;
 }
 
-
-
-function _moveToNextUntranslatedMessage(editor: vscode.TextEditor, backwards=false) {
+function focusOnNextUntranslated(editor: vscode.TextEditor, backwards = false) {
     const position = editor.selection.active;
     const message = nextUntranslatedMessage(editor.document, position.line, backwards);
     if (message !== null) {
         focusOnMessage(editor, message);
-    }    
+    }
 }
-
 
 export function moveToNextUntranslatedMessage(editor: vscode.TextEditor) {
-    _moveToNextUntranslatedMessage(editor);
+    focusOnNextUntranslated(editor);
 }
-
 
 export function moveToPreviousUntranslatedMessage(editor: vscode.TextEditor) {
-    _moveToNextUntranslatedMessage(editor, true);
+    focusOnNextUntranslated(editor, true);
 }
-
 
 export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
@@ -196,4 +184,6 @@ export function activate(context: vscode.ExtensionContext) {
     );
 }
 
-export function deactivate() {}
+export function deactivate() {
+    // deactivate extension
+}

@@ -1,14 +1,16 @@
-import {assert} from 'chai';
-import * as path from 'path';
+/**
+ * vsgettext extension tests
+ */
 
-import * as vscode from "vscode";
-import * as vscgettext from "../src/vscgettext";
+import { assert } from 'chai';
+import { join as pathjoin } from 'path';
 
+import * as vscode from 'vscode';
+import * as vscgettext from '../src/vscgettext';
 
 function inputpath(basename: string): string {
-    return path.join(__dirname, '..', '..', 'test', 'inputfiles', basename);
+    return pathjoin(__dirname, '..', '..', 'test', 'inputfiles', basename);
 }
-
 
 function assertCursorAt(editor: vscode.TextEditor, lineno: number, colno: number) {
     const selection = editor.selection.active;
@@ -16,14 +18,13 @@ function assertCursorAt(editor: vscode.TextEditor, lineno: number, colno: number
     assert.deepEqual(actualPos, {lineno, colno});
 }
 
-
 function openFile(path): Thenable<vscode.TextEditor> {
     return vscode.workspace.openTextDocument(path).then(document => {
         return vscode.window.showTextDocument(document);
     });
 }
 
-suite("vscode-gettext tests", () => {
+suite('vscode-gettext tests', () => {
     test('move to helper', done => {
         openFile(inputpath('messages.po')).then(editor => {
             vscgettext.moveCursorTo(editor, 10, 0);
@@ -43,7 +44,7 @@ suite("vscode-gettext tests", () => {
                 msgctxtLine: null,
                 firstline: 15,
                 lastline: 17,
-            })
+            });
         }).then(done, done);
     });
 
@@ -59,7 +60,7 @@ suite("vscode-gettext tests", () => {
                 msgctxtLine: 26,
                 firstline: 26,
                 lastline: 29,
-            })
+            });
         }).then(done, done);
     });
 
@@ -75,7 +76,7 @@ suite("vscode-gettext tests", () => {
                 msgctxtLine: null,
                 firstline: 30,
                 lastline: 34,
-            })
+            });
         }).then(done, done);
     });
 
@@ -92,7 +93,7 @@ suite("vscode-gettext tests", () => {
         }).then(done, done);
     });
 
-    test("editor doesn't move when on the last message of the file", done => {
+    test('editor doesn\'t move when on the last message of the file', done => {
         openFile(inputpath('messages.po')).then(editor => {
             // put the cursor somewhere in the file
             vscgettext.moveCursorTo(editor, 37, 0);
@@ -112,7 +113,7 @@ suite("vscode-gettext tests", () => {
         }).then(done, done);
     });
 
-    test("editor doesn't move when on the first message of the file", done => {
+    test('editor doesn\'t move when on the first message of the file', done => {
         openFile(inputpath('messages.po')).then(editor => {
             // put the cursor somewhere in the file
             vscgettext.moveCursorTo(editor, 10, 0);
