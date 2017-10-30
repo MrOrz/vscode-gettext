@@ -18,7 +18,7 @@ function assertCursorAt(editor: vscode.TextEditor, lineno: number, colno: number
 
 
 function openFile(path): Thenable<vscode.TextEditor> {
-    return vscode.workspace.openTextDocument(inputpath('messages.po')).then(document => {
+    return vscode.workspace.openTextDocument(path).then(document => {
         return vscode.window.showTextDocument(document);
     });
 }
