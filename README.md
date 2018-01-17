@@ -1,5 +1,7 @@
 # gettext Language Support for Visual Studio Code
 
+[![Build Status](https://travis-ci.org/MrOrz/vscode-gettext.svg?branch=master)](https://travis-ci.org/MrOrz/vscode-gettext)
+
 Adds syntax highlight to `po`, `pot` and `potx` files.
 
 Source tmLanguage file: https://github.com/textmate/gettext.tmbundle/blob/master/Syntaxes/Gettext.tmLanguage
