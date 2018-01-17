@@ -20,6 +20,10 @@
               },
               "esSpecCompliant": true
             }
+        ],
+        "no-implicit-dependencies": [
+            true,
+            "dev"
         ]
     }
 }
