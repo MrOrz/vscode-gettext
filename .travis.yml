@@ -19,6 +19,7 @@ install:
   - npm run vscode:prepublish
 
 script:
+  - npm run lint
   - npm test --silent
 
 language: node_js
