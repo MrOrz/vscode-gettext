@@ -1,5 +1,6 @@
-# Ref: https://code.visualstudio.com/docs/extensions/testing-extensions#_running-tests-automatically-on-travis-ci-build-machines
-#
+# Ref:
+# https://code.visualstudio.com/docs/extensions/testing-extensions#_running-tests-automatically-on-travis-ci-build-machines
+# https://docs.travis-ci.com/user/languages/javascript-with-nodejs/
 
 sudo: false
 
@@ -20,3 +21,8 @@ install:
 
 script:
   - npm test --silent
+
+lauguage: node_js
+node_js:
+  - node
+  - lts/*
