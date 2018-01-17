@@ -5,7 +5,6 @@
 sudo: false
 
 os:
-  - osx
   - linux
 
 before_install:
@@ -25,4 +24,4 @@ script:
 language: node_js
 node_js:
   - node
-  - lts/*
+
