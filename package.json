@@ -68,5 +68,9 @@
         "tslint-microsoft-contrib": "^5.0.1",
         "typescript": "^2.5.3",
         "vscode": "^1.1.6"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/MrOrz/vscode-gettext.git"
     }
 }
