@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.1.1 - 2018-6-26
+- Fix .vscodeignore pattern to something that really works
+
 ## 0.1.0 - 2018-6-26
 - Adds .vscodeignore - #8
 - Adds "repository" entry in `package.json` - #9
