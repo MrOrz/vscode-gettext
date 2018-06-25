@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.0 - 2018-6-26
+- Adds .vscodeignore - #8
+- Adds "repository" entry in `package.json` - #9
+
 ## 0.0.2 - 2018-01-17
 Huge thanks to @adimascio for all the contribution! #7
 - Adds `vscgettext.moveToNextUntranslated` and `vscgettext.moveToPreviousUntranslated`
