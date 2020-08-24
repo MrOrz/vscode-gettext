@@ -13,7 +13,8 @@
     ],
     "activationEvents": [
         "onCommand:vscgettext.moveToNextUntranslated",
-        "onCommand:vscgettext.moveToPreviousUntranslated"
+        "onCommand:vscgettext.moveToPreviousUntranslated",
+        "*"
     ],
     "contributes": {
         "languages": [
