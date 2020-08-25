@@ -1,9 +1,13 @@
 # Change Log
 
-## 0.1.1 - 2018-6-26
+## 0.2.0 - 2020-08-25
+Kudos to @dstarikov for the new feature!
+- Support jump-to-definition - #13
+
+## 0.1.1 - 2018-06-26
 - Fix .vscodeignore pattern to something that really works
 
-## 0.1.0 - 2018-6-26
+## 0.1.0 - 2018-06-26
 - Adds .vscodeignore - #8
 - Adds "repository" entry in `package.json` - #9
 
