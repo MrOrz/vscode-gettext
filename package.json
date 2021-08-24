@@ -4,13 +4,21 @@
     "description": "Gettext PO files language support for Visual Studio Code",
     "version": "0.2.0",
     "publisher": "mrorz",
+    "license": "MIT",
+    "categories": [
+        "Programming Languages"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/MrOrz/vscode-gettext.git"
+    },
+    "bugs": {
+        "url": "https://github.com/MrOrz/vscode-gettext/issues"
+    },
     "main": "./out/src/vscgettext",
     "engines": {
         "vscode": "^1.12.0"
     },
-    "categories": [
-        "Programming Languages"
-    ],
     "activationEvents": [
         "onCommand:vscgettext.moveToNextUntranslated",
         "onCommand:vscgettext.moveToPreviousUntranslated",
@@ -69,9 +77,5 @@
         "tslint-microsoft-contrib": "^5.0.1",
         "typescript": "^2.5.3",
         "vscode": "^1.1.37"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/MrOrz/vscode-gettext.git"
     }
 }
