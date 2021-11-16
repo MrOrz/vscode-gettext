@@ -1,4 +1,6 @@
-# Change Log
+# Changelog
+
+Changes beyond 0.2.0 please see Github releases https://github.com/MrOrz/vscode-gettext/releases
 
 ## 0.2.0 - 2020-08-25
 Kudos to @dstarikov for the new feature!
