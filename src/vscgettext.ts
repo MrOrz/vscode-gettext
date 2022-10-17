@@ -5,8 +5,8 @@
 import * as vscode from 'vscode';
 
 const msgidStartRgx = /^msgid\s+"(.*?)"\s*$/;
-const msgstrStartRgx =  /^msgstr\s+"(.*?)"\s*$/;
-const msgctxtStartRgx =  /^msgctxt\s+"(.*?)"\s*$/;
+const msgstrStartRgx = /^msgstr\s+"(.*?)"\s*$/;
+const msgctxtStartRgx = /^msgctxt\s+"(.*?)"\s*$/;
 const continuationLineRgx = /^"(.*?)\s*"$/;
 
 interface IMessage {
@@ -34,13 +34,13 @@ function focusOnMessage(editor: vscode.TextEditor, message: IMessage) {
     );
 }
 
-function *documentLines(document: vscode.TextDocument, startline = 1) {
+function* documentLines(document: vscode.TextDocument, startline = 1) {
     for (let lineno = startline; lineno < document.lineCount; lineno++) {
         yield document.lineAt(lineno);
     }
 }
 
-function *backwardDocumentLines(document: vscode.TextDocument, startline = document.lineCount - 1) {
+function* backwardDocumentLines(document: vscode.TextDocument, startline = document.lineCount - 1) {
     for (let lineno = startline; lineno >= 0; lineno--) {
         yield document.lineAt(lineno);
     }
@@ -119,7 +119,7 @@ export function currentMessageDefinition(document: vscode.TextDocument, currentl
         message.msgidLine = firstline.lineNumber;
     }
 
-    for(const line of documentLines(document, message.firstline + 1)) {
+    for (const line of documentLines(document, message.firstline + 1)) {
         if (msgctxtStartRgx.test(line.text)) {
             break;
         }
@@ -184,7 +184,7 @@ export function provideDefinition(document: vscode.TextDocument, position: vscod
             // Get the source file path
             const sourceFile = sourceLocation[0];
             // Get the line number (vscode uses 0-based line numbers)
-            const sourceLine:number = (+sourceLocation[1]) - 1;
+            const sourceLine: number = (+sourceLocation[1]) - 1;
             // Find files in the workspace matching the source file
             return vscode.workspace.findFiles(sourceFile).then(value => {
                 if (!value) {
@@ -195,7 +195,7 @@ export function provideDefinition(document: vscode.TextDocument, position: vscod
                 const sourcePosition = new vscode.Position(sourceLine, 0);
 
                 // Set the position for every matching file in the workspace
-                const locations:vscode.Location[] = [];
+                const locations: vscode.Location[] = [];
                 value.forEach(uri => {
                     locations.push(new vscode.Location(uri, sourcePosition));
                 });

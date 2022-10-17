@@ -2,8 +2,11 @@
     "name": "language-gettext",
     "displayName": "gettext",
     "description": "Gettext PO files language support for Visual Studio Code",
-    "version": "0.2.0",
+    "version": "0.2.2",
     "publisher": "mrorz",
+    "contributors": [
+        "Quentin L"
+    ],
     "license": "MIT",
     "categories": [
         "Programming Languages"
@@ -17,12 +20,11 @@
     },
     "main": "./out/src/vscgettext",
     "engines": {
-        "vscode": "^1.12.0"
+        "vscode": "^1.70.0"
     },
     "activationEvents": [
         "onCommand:vscgettext.moveToNextUntranslated",
-        "onCommand:vscgettext.moveToPreviousUntranslated",
-        "*"
+        "onCommand:vscgettext.moveToPreviousUntranslated"
     ],
     "contributes": {
         "languages": [
@@ -68,14 +70,12 @@
         "lint": "tslint src/**/*.ts test/*.test.ts"
     },
     "devDependencies": {
-        "@types/chai": "^4.0.4",
-        "@types/mocha": "^2.2.44",
-        "@types/node": "^8.0.47",
-        "chai": "^4.1.2",
-        "tslint": "^5.8.0",
-        "tslint-eslint-rules": "^4.1.1",
-        "tslint-microsoft-contrib": "^5.0.1",
-        "typescript": "^2.5.3",
+        "@types/chai": "^4.3.3",
+        "@types/mocha": "^10.0.0",
+        "@types/node": "^18.11.0",
+        "chai": "^4.3.6",
+        "tslint": "^6.1.3",
+        "typescript": "^4.8.4",
         "vscode": "^1.1.37"
     }
 }
