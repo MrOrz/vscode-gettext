@@ -24,7 +24,10 @@
     },
     "activationEvents": [
         "onCommand:vscgettext.moveToNextUntranslated",
-        "onCommand:vscgettext.moveToPreviousUntranslated"
+        "onCommand:vscgettext.moveToPreviousUntranslated",
+        "onLanguage:po",
+        "onLanguage:pot",
+        "onLanguage:potx"
     ],
     "contributes": {
         "languages": [
