@@ -15,7 +15,7 @@ jobs:
           node-version: 18
       - run: npm ci
       - run: npm run lint
-      - run: npm run vstest
+      - run: npm test
       - name: Test if it builds
         uses: HaaLeo/publish-vscode-extension@v1
         with:
