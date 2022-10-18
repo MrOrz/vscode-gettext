@@ -16,3 +16,8 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run vstest
+      - name: Test if it builds
+        uses: HaaLeo/publish-vscode-extension@v1
+        with:
+          pat: STUB_TOKEN
+          dryRun: true
