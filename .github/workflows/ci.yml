@@ -1,0 +1,23 @@
+name: CI test
+
+on:
+  - pull_request
+  - push
+  - workflow_dispatch
+
+jobs:
+  install-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 18
+      - run: npm ci
+      - run: npm run lint
+      - run: xvfb-run -a npm test
+      - name: Test if it builds
+        uses: HaaLeo/publish-vscode-extension@v1
+        with:
+          pat: STUB_TOKEN
+          dryRun: true
