@@ -44,6 +44,7 @@ suite('vscode-gettext tests', () => {
                 msgctxtLine: null,
                 firstline: 15,
                 lastline: 17,
+                isfuzzy: false,
             });
         }).then(done, done);
     });
@@ -60,6 +61,7 @@ suite('vscode-gettext tests', () => {
                 msgctxtLine: 26,
                 firstline: 26,
                 lastline: 29,
+                isfuzzy: false,
             });
         }).then(done, done);
     });
@@ -76,6 +78,7 @@ suite('vscode-gettext tests', () => {
                 msgctxtLine: null,
                 firstline: 30,
                 lastline: 34,
+                isfuzzy: false,
             });
         }).then(done, done);
     });
@@ -96,10 +99,10 @@ suite('vscode-gettext tests', () => {
     test('editor doesn\'t move when on the last message of the file', done => {
         openFile(inputpath('messages.po')).then(editor => {
             // put the cursor somewhere in the file
-            vscgettext.moveCursorTo(editor, 37, 0);
+            vscgettext.moveCursorTo(editor, 42, 0);
             // move to next untranslated message and check new position
             vscgettext.moveToNextUntranslatedMessage(editor);
-            assertCursorAt(editor, 37, 0);
+            assertCursorAt(editor, 42, 0);
         }).then(done, done);
     });
 
@@ -123,4 +126,23 @@ suite('vscode-gettext tests', () => {
         }).then(done, done);
     });
 
+    test('jump to the previous fuzzy message', done => {
+        openFile(inputpath('messages.po')).then(editor => {
+            // put the cursor somewhere in the file
+            vscgettext.moveCursorTo(editor, 42, 0);
+            // move to next fuzzy message and check new position
+            vscgettext.moveToPreviousFuzzyMessage(editor);
+            assertCursorAt(editor, 38, 8);
+        }).then(done, done);
+    });
+
+    test('jump to the next fuzzy message', done => {
+        openFile(inputpath('messages.po')).then(editor => {
+            // put the cursor somewhere in the file
+            vscgettext.moveCursorTo(editor, 10, 0);
+            // move to next fuzzy message and check new position
+            vscgettext.moveToNextFuzzyMessage(editor);
+            assertCursorAt(editor, 38, 8);
+        }).then(done, done);
+    });
 });
