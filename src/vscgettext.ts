@@ -10,7 +10,7 @@ const msgidStartRgx = /^msgid\s+"(.*?)"\s*$/;
 const msgstrStartRgx = /^msgstr\s+"(.*?)"\s*$/;
 const continuationLineRgx = /^"(.*?)\s*"$/;
 
-class IMessage {
+class Message {
   msgid: string;
   msgidLine: number;
   msgstr: string;
@@ -32,7 +32,7 @@ export function moveCursorTo(
   return position;
 }
 
-function focusOnMessage(editor: vscode.TextEditor, message: IMessage) {
+function focusOnMessage(editor: vscode.TextEditor, message: Message) {
   const position = moveCursorTo(editor, message.msgstrLine, 8);
   editor.revealRange(
     new vscode.Range(position, position),
@@ -57,8 +57,8 @@ function* backwardDocumentLines(
 
 function nextMessage(
   document: vscode.TextDocument,
-  currentMessage: IMessage
-): IMessage {
+  currentMessage: Message
+): Message {
   for (const line of documentLines(document, currentMessage.lastline + 1)) {
     if (line.text && !line.text.trim().startsWith("#")) {
       return currentMessageDefinition(document, line.lineNumber);
@@ -69,8 +69,8 @@ function nextMessage(
 
 function previousMessage(
   document: vscode.TextDocument,
-  currentMessage: IMessage
-): IMessage {
+  currentMessage: Message
+): Message {
   for (const line of backwardDocumentLines(
     document,
     currentMessage.firstline - 1
@@ -117,14 +117,14 @@ function currentMessageStart(
 export function currentMessageDefinition(
   document: vscode.TextDocument,
   currentline: number
-): IMessage {
+): Message {
   const firstline = currentMessageStart(document, currentline);
   if (firstline === null) {
     return null;
   }
 
   let currentProperty: string;
-  const message: IMessage = {
+  const message: Message = {
     msgid: null,
     msgidLine: null,
     msgstr: null,
@@ -183,7 +183,7 @@ function nextMessagWithCondition(
   lineno: number,
   condition: Function,
   backwards = false
-): IMessage {
+): Message {
   let message = currentMessageDefinition(document, lineno);
   const getMessage = backwards ? previousMessage : nextMessage;
   while (message !== null) {
@@ -199,7 +199,7 @@ function nextUntranslatedMessage(
   document: vscode.TextDocument,
   lineno: number,
   backwards = false
-): IMessage {
+): Message {
   return nextMessagWithCondition(
     document,
     lineno,
@@ -212,7 +212,7 @@ function nextFuzzyMessage(
   document: vscode.TextDocument,
   lineno: number,
   backwards = false
-): IMessage {
+): Message {
   return nextMessagWithCondition(
     document,
     lineno,
