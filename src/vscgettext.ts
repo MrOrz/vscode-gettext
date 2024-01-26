@@ -178,20 +178,34 @@ export function currentMessageDefinition(
   return message;
 }
 
-function nextUntranslatedMessage(
+function nextMessagWithCondition(
   document: vscode.TextDocument,
   lineno: number,
+  condition: Function,
   backwards = false
 ): IMessage {
   let message = currentMessageDefinition(document, lineno);
   const messageIterator = backwards ? previousMessage : nextMessage;
   while (message !== null) {
     message = messageIterator(document, message);
-    if (message && !message.msgstr) {
+    if (message && condition(message)) {
       return message;
     }
   }
   return null;
+}
+
+function nextUntranslatedMessage(
+  document: vscode.TextDocument,
+  lineno: number,
+  backwards = false
+): IMessage {
+  return nextMessagWithCondition(
+    document,
+    lineno,
+    (message) => !message.msgstr,
+    backwards
+  );
 }
 
 function nextFuzzyMessage(
@@ -199,15 +213,12 @@ function nextFuzzyMessage(
   lineno: number,
   backwards = false
 ): IMessage {
-  let message = currentMessageDefinition(document, lineno);
-  const messageIterator = backwards ? previousMessage : nextMessage;
-  while (message !== null) {
-    message = messageIterator(document, message);
-    if (message && message.isfuzzy) {
-      return message;
-    }
-  }
-  return null;
+  return nextMessagWithCondition(
+    document,
+    lineno,
+    (message) => message.isfuzzy,
+    backwards
+  );
 }
 
 function focusOnNextTarget(
