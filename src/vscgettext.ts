@@ -111,7 +111,6 @@ function currentMessageStart(
       msgstrStartRgx.test(line.text)
     ) {
       startLine = line;
-      continue;
     }
   }
   // if we've reached the beginning of the file, msgidLine won't have been set
