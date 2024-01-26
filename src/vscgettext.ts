@@ -185,9 +185,9 @@ function nextMessagWithCondition(
   backwards = false
 ): IMessage {
   let message = currentMessageDefinition(document, lineno);
-  const messageIterator = backwards ? previousMessage : nextMessage;
+  const getMessage = backwards ? previousMessage : nextMessage;
   while (message !== null) {
-    message = messageIterator(document, message);
+    message = getMessage(document, message);
     if (message && condition(message)) {
       return message;
     }
