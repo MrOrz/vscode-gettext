@@ -10,7 +10,7 @@ const msgidStartRgx = /^msgid\s+"(.*?)"\s*$/;
 const msgstrStartRgx = /^msgstr\s+"(.*?)"\s*$/;
 const continuationLineRgx = /^"(.*?)\s*"$/;
 
-interface IMessage {
+class IMessage {
   msgid: string;
   msgidLine: number;
   msgstr: string;
@@ -178,7 +178,7 @@ export function currentMessageDefinition(
   return message;
 }
 
-function nextMessageWithCondition(
+function nextMessagWithCondition(
   document: vscode.TextDocument,
   lineno: number,
   condition: Function,
@@ -200,7 +200,7 @@ function nextUntranslatedMessage(
   lineno: number,
   backwards = false
 ): IMessage {
-  return nextMessageWithCondition(
+  return nextMessagWithCondition(
     document,
     lineno,
     (message) => !message.msgstr,
@@ -213,7 +213,7 @@ function nextFuzzyMessage(
   lineno: number,
   backwards = false
 ): IMessage {
-  return nextMessageWithCondition(
+  return nextMessagWithCondition(
     document,
     lineno,
     (message) => message.isfuzzy,
