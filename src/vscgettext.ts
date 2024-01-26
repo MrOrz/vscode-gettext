@@ -4,11 +4,11 @@
 
 import * as vscode from "vscode";
 
+const fuzzyRgx = /^#, fuzzy/;
+const msgctxtStartRgx = /^msgctxt\s+"(.*?)"\s*$/;
 const msgidStartRgx = /^msgid\s+"(.*?)"\s*$/;
 const msgstrStartRgx = /^msgstr\s+"(.*?)"\s*$/;
-const msgctxtStartRgx = /^msgctxt\s+"(.*?)"\s*$/;
 const continuationLineRgx = /^"(.*?)\s*"$/;
-const fuzzyRgx = /^#, fuzzy/;
 
 interface IMessage {
   msgid: string;
