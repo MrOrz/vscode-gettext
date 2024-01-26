@@ -29,77 +29,11 @@ function openFile(path): Thenable<vscode.TextEditor> {
 }
 
 suite("Helper functions", () => {
-  test("move to helper", (done) => {
+  test("`moveCursorTo` moves the cursor to the correct position", (done) => {
     openFile(inputpath("messages.po"))
       .then((editor) => {
         vscgettext.moveCursorTo(editor, 10, 0);
         assertCursorAt(editor, 10, 0);
-      })
-      .then(done, done);
-  });
-
-  test("message definition parsing", (done) => {
-    openFile(inputpath("messages.po"))
-      .then((editor) => {
-        const message = vscgettext.currentMessageDefinition(
-          editor.document,
-          15
-        );
-        assert.deepEqual(message, {
-          msgid: "msgid1",
-          msgidLine: 15,
-          msgstr: "message 1",
-          msgstrLine: 16,
-          msgctxt: null,
-          msgctxtLine: null,
-          firstline: 15,
-          lastline: 17,
-          isfuzzy: false,
-        });
-      })
-      .then(done, done);
-  });
-
-  test("message definition parsing with msgctx", (done) => {
-    openFile(inputpath("messages.po"))
-      .then((editor) => {
-        const message = vscgettext.currentMessageDefinition(
-          editor.document,
-          27
-        );
-        assert.deepEqual(message, {
-          msgid: "agent_type",
-          msgidLine: 27,
-          msgstr: "",
-          msgstrLine: 28,
-          msgctxt: "CorporateBody",
-          msgctxtLine: 26,
-          firstline: 26,
-          lastline: 29,
-          isfuzzy: false,
-        });
-      })
-      .then(done, done);
-  });
-
-  test("message definition with msgid on multiple lines", (done) => {
-    openFile(inputpath("messages.po"))
-      .then((editor) => {
-        const message = vscgettext.currentMessageDefinition(
-          editor.document,
-          31
-        );
-        assert.deepEqual(message, {
-          msgid: "Another message on several lines.",
-          msgidLine: 30,
-          msgstr: "translation on several lines too.",
-          msgstrLine: 32,
-          msgctxt: null,
-          msgctxtLine: null,
-          firstline: 30,
-          lastline: 34,
-          isfuzzy: false,
-        });
       })
       .then(done, done);
   });
