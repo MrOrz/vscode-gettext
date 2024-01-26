@@ -123,7 +123,7 @@ export function currentMessageDefinition(
     return null;
   }
 
-  let currentProperty;
+  let currentProperty: string;
   const message: IMessage = {
     msgid: null,
     msgidLine: null,
@@ -149,7 +149,7 @@ export function currentMessageDefinition(
       break;
     } else if (msgctxtStartRgx.test(line.text)) {
       if (message.msgctxt !== null || message.msgid !== null) {
-        break;
+        break; // we are now on the next message, definition is over
       } else {
         message.msgctxt = msgctxtStartRgx.exec(line.text)[1];
         message.msgctxtLine = line.lineNumber;
