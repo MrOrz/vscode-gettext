@@ -113,6 +113,7 @@ function currentMessageStart(
       startLine = line;
     }
   }
+
   // if we've reached the beginning of the file, msgidLine won't have been set
   // and we'll return null in that case.
   return startLine;
