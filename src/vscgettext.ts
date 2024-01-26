@@ -95,14 +95,14 @@ function currentMessageStart(
 
   // go backwards to msgid definition
   for (const line of backwardDocumentLines(document, currentLine)) {
-    const isComment = line.text && line.text.trim().startsWith("#");
-
     if (msgstrStartRgx.test(line.text) && startLine !== null) {
       // we hit a msgstr but we already hit a msgid definition, it means
       // that we've reached another message definition, return the line of
       // the msgid hit.
       return startLine;
     }
+
+    const isComment = line.text && line.text.trim().startsWith("#");
 
     if (
       isComment ||
