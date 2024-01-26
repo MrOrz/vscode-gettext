@@ -27,6 +27,40 @@ type Message = {
   isfuzzy: boolean;
 };
 
+export function activate(context: vscode.ExtensionContext) {
+  context.subscriptions.push(
+    vscode.commands.registerTextEditorCommand(
+      "vscgettext.moveToNextUntranslated",
+      moveToNextUntranslatedMessage
+    )
+  );
+  context.subscriptions.push(
+    vscode.commands.registerTextEditorCommand(
+      "vscgettext.moveToPreviousUntranslated",
+      moveToPreviousUntranslatedMessage
+    )
+  );
+  context.subscriptions.push(
+    vscode.commands.registerTextEditorCommand(
+      "vscgettext.moveToNextFuzzy",
+      moveToNextFuzzyMessage
+    )
+  );
+  context.subscriptions.push(
+    vscode.commands.registerTextEditorCommand(
+      "vscgettext.moveToPreviousFuzzy",
+      moveToPreviousFuzzyMessage
+    )
+  );
+  context.subscriptions.push(
+    vscode.languages.registerDefinitionProvider("po", { provideDefinition })
+  );
+}
+
+export function deactivate() {
+  // deactivate extension
+}
+
 export function moveCursorTo(
   editor: vscode.TextEditor,
   lineno: number,
@@ -149,40 +183,6 @@ export function provideDefinition(
       });
     }
   }
-}
-
-export function activate(context: vscode.ExtensionContext) {
-  context.subscriptions.push(
-    vscode.commands.registerTextEditorCommand(
-      "vscgettext.moveToNextUntranslated",
-      moveToNextUntranslatedMessage
-    )
-  );
-  context.subscriptions.push(
-    vscode.commands.registerTextEditorCommand(
-      "vscgettext.moveToPreviousUntranslated",
-      moveToPreviousUntranslatedMessage
-    )
-  );
-  context.subscriptions.push(
-    vscode.commands.registerTextEditorCommand(
-      "vscgettext.moveToNextFuzzy",
-      moveToNextFuzzyMessage
-    )
-  );
-  context.subscriptions.push(
-    vscode.commands.registerTextEditorCommand(
-      "vscgettext.moveToPreviousFuzzy",
-      moveToPreviousFuzzyMessage
-    )
-  );
-  context.subscriptions.push(
-    vscode.languages.registerDefinitionProvider("po", { provideDefinition })
-  );
-}
-
-export function deactivate() {
-  // deactivate extension
 }
 
 function focusOnMessage(editor: vscode.TextEditor, message: Message) {
