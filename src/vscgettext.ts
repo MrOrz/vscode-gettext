@@ -88,8 +88,6 @@ function currentMessageStart(
 ): vscode.TextLine {
   let startLine = null;
 
-  // Comments (optional), msgctxt (optional), msgid, and msgstr appear in this order.
-
   // go backwards to msgid definition
   for (const line of backwardDocumentLines(document, currentLine)) {
     const isComment = line.text && line.text.trim().startsWith("#");
@@ -139,6 +137,8 @@ export function currentMessageDefinition(
   };
 
   for (const line of documentLines(document, message.firstline)) {
+    // Comments (optional), msgctxt (optional), msgid, and msgstr appear in this order.
+
     if (fuzzyRgx.test(line.text)) {
       if (message.msgid !== null) {
         break;
