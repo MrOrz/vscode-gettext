@@ -5,9 +5,14 @@
 import * as vscode from "vscode";
 
 const fuzzyRgx = /^#, fuzzy/;
-const msgctxtStartRgx = /^msgctxt\s+"(.*?)"\s*$/;
-const msgidStartRgx = /^msgid\s+"(.*?)"\s*$/;
-const msgstrStartRgx = /^msgstr\s+"(.*?)"\s*$/;
+
+function regexWithKey(key: string) {
+  return new RegExp(`^${key}\\s+"(.*?)"\\s*$`);
+}
+
+const msgctxtStartRgx = regexWithKey("msgctxt");
+const msgidStartRgx = regexWithKey("msgid");
+const msgstrStartRgx = regexWithKey("msgstr");
 const continuationLineRgx = /^"(.*?)\s*"$/;
 
 type Message = {
