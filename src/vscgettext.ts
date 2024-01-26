@@ -210,40 +210,32 @@ function nextFuzzyMessage(
   return null;
 }
 
-function focusOnNextUntranslated(editor: vscode.TextEditor, backwards = false) {
+function focusOnNextTarget(
+  editor: vscode.TextEditor,
+  nextTargetFunc: Function,
+  backwards = false
+) {
   const position = editor.selection.active;
-  const message = nextUntranslatedMessage(
-    editor.document,
-    position.line,
-    backwards
-  );
-  if (message !== null) {
-    focusOnMessage(editor, message);
-  }
-}
-
-function focusOnNextFuzzy(editor: vscode.TextEditor, backwards = false) {
-  const position = editor.selection.active;
-  const message = nextFuzzyMessage(editor.document, position.line, backwards);
+  const message = nextTargetFunc(editor.document, position.line, backwards);
   if (message !== null) {
     focusOnMessage(editor, message);
   }
 }
 
 export function moveToNextUntranslatedMessage(editor: vscode.TextEditor) {
-  focusOnNextUntranslated(editor);
+  focusOnNextTarget(editor, nextUntranslatedMessage);
 }
 
 export function moveToPreviousUntranslatedMessage(editor: vscode.TextEditor) {
-  focusOnNextUntranslated(editor, true);
+  focusOnNextTarget(editor, nextUntranslatedMessage, true);
 }
 
 export function moveToNextFuzzyMessage(editor: vscode.TextEditor) {
-  focusOnNextFuzzy(editor);
+  focusOnNextTarget(editor, nextFuzzyMessage);
 }
 
 export function moveToPreviousFuzzyMessage(editor: vscode.TextEditor) {
-  focusOnNextFuzzy(editor, true);
+  focusOnNextTarget(editor, nextFuzzyMessage, true);
 }
 
 export function provideDefinition(
