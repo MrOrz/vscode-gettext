@@ -37,88 +37,6 @@ export function moveCursorTo(
   return position;
 }
 
-function focusOnMessage(editor: vscode.TextEditor, message: Message) {
-  const position = moveCursorTo(editor, message.msgstrLine, 8);
-  editor.revealRange(
-    new vscode.Range(position, position),
-    vscode.TextEditorRevealType.InCenterIfOutsideViewport
-  );
-}
-
-function* documentLines(document: vscode.TextDocument, startline = 1) {
-  for (let lineno = startline; lineno < document.lineCount; lineno++) {
-    yield document.lineAt(lineno);
-  }
-}
-
-function* backwardDocumentLines(
-  document: vscode.TextDocument,
-  startline = document.lineCount - 1
-) {
-  for (let lineno = startline; lineno >= 0; lineno--) {
-    yield document.lineAt(lineno);
-  }
-}
-
-function nextMessage(
-  document: vscode.TextDocument,
-  currentMessage: Message
-): Message {
-  for (const line of documentLines(document, currentMessage.lastline + 1)) {
-    if (line.text && !line.text.trim().startsWith("#")) {
-      return currentMessageDefinition(document, line.lineNumber);
-    }
-  }
-  return null;
-}
-
-function previousMessage(
-  document: vscode.TextDocument,
-  currentMessage: Message
-): Message {
-  for (const line of backwardDocumentLines(
-    document,
-    currentMessage.firstline - 1
-  )) {
-    if (line.text && !line.text.trim().startsWith("#")) {
-      return currentMessageDefinition(document, line.lineNumber);
-    }
-  }
-  return null;
-}
-
-function currentMessageStart(
-  document: vscode.TextDocument,
-  currentLine: number
-): vscode.TextLine {
-  let startLine = null;
-
-  // go backwards to msgid definition
-  for (const line of backwardDocumentLines(document, currentLine)) {
-    if (msgstrStartRgx.test(line.text) && startLine !== null) {
-      // we hit a msgstr but we already hit a msgid definition, it means
-      // that we've reached another message definition, return the line of
-      // the msgid hit.
-      return startLine;
-    }
-
-    const isComment = line.text && line.text.trim().startsWith("#");
-
-    if (
-      isComment ||
-      msgctxtStartRgx.test(line.text) ||
-      msgidStartRgx.test(line.text) ||
-      msgstrStartRgx.test(line.text)
-    ) {
-      startLine = line;
-    }
-  }
-
-  // if we've reached the beginning of the file, msgidLine won't have been set
-  // and we'll return null in that case.
-  return startLine;
-}
-
 export function currentMessageDefinition(
   document: vscode.TextDocument,
   currentline: number
@@ -181,61 +99,6 @@ export function currentMessageDefinition(
   message.lastline--; // last line is the one before the next message definition
 
   return message;
-}
-
-function nextMessagWithCondition(
-  document: vscode.TextDocument,
-  lineno: number,
-  condition: Function,
-  backwards = false
-): Message {
-  let message = currentMessageDefinition(document, lineno);
-  const getMessage = backwards ? previousMessage : nextMessage;
-  while (message !== null) {
-    message = getMessage(document, message);
-    if (message && condition(message)) {
-      return message;
-    }
-  }
-  return null;
-}
-
-function nextUntranslatedMessage(
-  document: vscode.TextDocument,
-  lineno: number,
-  backwards = false
-): Message {
-  return nextMessagWithCondition(
-    document,
-    lineno,
-    (message) => !message.msgstr,
-    backwards
-  );
-}
-
-function nextFuzzyMessage(
-  document: vscode.TextDocument,
-  lineno: number,
-  backwards = false
-): Message {
-  return nextMessagWithCondition(
-    document,
-    lineno,
-    (message) => message.isfuzzy,
-    backwards
-  );
-}
-
-function focusOnNextTarget(
-  editor: vscode.TextEditor,
-  nextTargetFunc: Function,
-  backwards = false
-) {
-  const position = editor.selection.active;
-  const message = nextTargetFunc(editor.document, position.line, backwards);
-  if (message !== null) {
-    focusOnMessage(editor, message);
-  }
 }
 
 export function moveToNextUntranslatedMessage(editor: vscode.TextEditor) {
@@ -320,4 +183,141 @@ export function activate(context: vscode.ExtensionContext) {
 
 export function deactivate() {
   // deactivate extension
+}
+
+function focusOnMessage(editor: vscode.TextEditor, message: Message) {
+  const position = moveCursorTo(editor, message.msgstrLine, 8);
+  editor.revealRange(
+    new vscode.Range(position, position),
+    vscode.TextEditorRevealType.InCenterIfOutsideViewport
+  );
+}
+
+function* documentLines(document: vscode.TextDocument, startline = 1) {
+  for (let lineno = startline; lineno < document.lineCount; lineno++) {
+    yield document.lineAt(lineno);
+  }
+}
+
+function* backwardDocumentLines(
+  document: vscode.TextDocument,
+  startline = document.lineCount - 1
+) {
+  for (let lineno = startline; lineno >= 0; lineno--) {
+    yield document.lineAt(lineno);
+  }
+}
+
+function nextMessage(
+  document: vscode.TextDocument,
+  currentMessage: Message
+): Message {
+  for (const line of documentLines(document, currentMessage.lastline + 1)) {
+    if (line.text && !line.text.trim().startsWith("#")) {
+      return currentMessageDefinition(document, line.lineNumber);
+    }
+  }
+  return null;
+}
+
+function previousMessage(
+  document: vscode.TextDocument,
+  currentMessage: Message
+): Message {
+  for (const line of backwardDocumentLines(
+    document,
+    currentMessage.firstline - 1
+  )) {
+    if (line.text && !line.text.trim().startsWith("#")) {
+      return currentMessageDefinition(document, line.lineNumber);
+    }
+  }
+  return null;
+}
+
+function currentMessageStart(
+  document: vscode.TextDocument,
+  currentLine: number
+): vscode.TextLine {
+  let startLine = null;
+
+  // go backwards to msgid definition
+  for (const line of backwardDocumentLines(document, currentLine)) {
+    if (msgstrStartRgx.test(line.text) && startLine !== null) {
+      // we hit a msgstr but we already hit a msgid definition, it means
+      // that we've reached another message definition, return the line of
+      // the msgid hit.
+      return startLine;
+    }
+
+    const isComment = line.text && line.text.trim().startsWith("#");
+
+    if (
+      isComment ||
+      msgctxtStartRgx.test(line.text) ||
+      msgidStartRgx.test(line.text) ||
+      msgstrStartRgx.test(line.text)
+    ) {
+      startLine = line;
+    }
+  }
+
+  // if we've reached the beginning of the file, msgidLine won't have been set
+  // and we'll return null in that case.
+  return startLine;
+}
+
+function nextMessagWithCondition(
+  document: vscode.TextDocument,
+  lineno: number,
+  condition: Function,
+  backwards = false
+): Message {
+  let message = currentMessageDefinition(document, lineno);
+  const getMessage = backwards ? previousMessage : nextMessage;
+  while (message !== null) {
+    message = getMessage(document, message);
+    if (message && condition(message)) {
+      return message;
+    }
+  }
+  return null;
+}
+
+function nextUntranslatedMessage(
+  document: vscode.TextDocument,
+  lineno: number,
+  backwards = false
+): Message {
+  return nextMessagWithCondition(
+    document,
+    lineno,
+    (message) => !message.msgstr,
+    backwards
+  );
+}
+
+function nextFuzzyMessage(
+  document: vscode.TextDocument,
+  lineno: number,
+  backwards = false
+): Message {
+  return nextMessagWithCondition(
+    document,
+    lineno,
+    (message) => message.isfuzzy,
+    backwards
+  );
+}
+
+function focusOnNextTarget(
+  editor: vscode.TextEditor,
+  nextTargetFunc: Function,
+  backwards = false
+) {
+  const position = editor.selection.active;
+  const message = nextTargetFunc(editor.document, position.line, backwards);
+  if (message !== null) {
+    focusOnMessage(editor, message);
+  }
 }
