@@ -28,7 +28,7 @@ function openFile(path): Thenable<vscode.TextEditor> {
   });
 }
 
-suite("vscode-gettext tests", () => {
+suite("Helper functions", () => {
   test("move to helper", (done) => {
     openFile(inputpath("messages.po"))
       .then((editor) => {
@@ -103,7 +103,9 @@ suite("vscode-gettext tests", () => {
       })
       .then(done, done);
   });
+});
 
+suite("vscode-gettext tests", () => {
   test("editor jumps not next untranslated msgstr", (done) => {
     openFile(inputpath("messages.po"))
       .then((editor) => {
