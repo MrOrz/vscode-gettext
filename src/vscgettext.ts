@@ -10,7 +10,7 @@ const msgidStartRgx = /^msgid\s+"(.*?)"\s*$/;
 const msgstrStartRgx = /^msgstr\s+"(.*?)"\s*$/;
 const continuationLineRgx = /^"(.*?)\s*"$/;
 
-class Message {
+type Message = {
   msgid: string;
   msgidLine: number;
   msgstr: string;
@@ -20,7 +20,7 @@ class Message {
   firstline: number;
   lastline: number;
   isfuzzy: boolean;
-}
+};
 
 export function moveCursorTo(
   editor: vscode.TextEditor,
