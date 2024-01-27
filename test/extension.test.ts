@@ -7,6 +7,7 @@ import { join as pathjoin } from "path";
 
 import * as vscode from "vscode";
 import * as vscgettext from "../src/lib";
+import { moveCursorTo } from "../src/moving";
 
 function inputpath(basename: string): string {
   return pathjoin(__dirname, "..", "..", "test", "inputfiles", basename);
@@ -32,7 +33,7 @@ suite("Helper functions", () => {
   test("`moveCursorTo` moves the cursor to the correct position", (done) => {
     openFile(inputpath("messages.po"))
       .then((editor) => {
-        vscgettext.moveCursorTo(editor, 10, 0);
+        moveCursorTo(editor, 10, 0);
         assertCursorAt(editor, 10, 0);
       })
       .then(done, done);
@@ -44,7 +45,7 @@ suite("vscode-gettext tests", () => {
     openFile(inputpath("messages.po"))
       .then((editor) => {
         // put the cursor somewhere in the file
-        vscgettext.moveCursorTo(editor, 10, 0);
+        moveCursorTo(editor, 10, 0);
         // move to next untranslated message and check new position
         vscgettext.moveToNextUntranslatedMessage(editor);
         assertCursorAt(editor, 20, 8);
@@ -59,7 +60,7 @@ suite("vscode-gettext tests", () => {
     openFile(inputpath("messages.po"))
       .then((editor) => {
         // put the cursor somewhere in the file
-        vscgettext.moveCursorTo(editor, 42, 0);
+        moveCursorTo(editor, 42, 0);
         // move to next untranslated message and check new position
         vscgettext.moveToNextUntranslatedMessage(editor);
         assertCursorAt(editor, 42, 0);
@@ -71,7 +72,7 @@ suite("vscode-gettext tests", () => {
     openFile(inputpath("messages.po"))
       .then((editor) => {
         // put the cursor somewhere in the file
-        vscgettext.moveCursorTo(editor, 37, 0);
+        moveCursorTo(editor, 37, 0);
         // move to next untranslated message and check new position
         vscgettext.moveToPreviousUntranslatedMessage(editor);
         assertCursorAt(editor, 28, 8);
@@ -83,7 +84,7 @@ suite("vscode-gettext tests", () => {
     openFile(inputpath("messages.po"))
       .then((editor) => {
         // put the cursor somewhere in the file
-        vscgettext.moveCursorTo(editor, 10, 0);
+        moveCursorTo(editor, 10, 0);
         // move to next untranslated message and check new position
         vscgettext.moveToPreviousUntranslatedMessage(editor);
         assertCursorAt(editor, 10, 0);
@@ -95,7 +96,7 @@ suite("vscode-gettext tests", () => {
     openFile(inputpath("messages.po"))
       .then((editor) => {
         // put the cursor somewhere in the file
-        vscgettext.moveCursorTo(editor, 42, 0);
+        moveCursorTo(editor, 42, 0);
         // move to next fuzzy message and check new position
         vscgettext.moveToPreviousFuzzyMessage(editor);
         assertCursorAt(editor, 38, 8);
@@ -107,7 +108,7 @@ suite("vscode-gettext tests", () => {
     openFile(inputpath("messages.po"))
       .then((editor) => {
         // put the cursor somewhere in the file
-        vscgettext.moveCursorTo(editor, 10, 0);
+        moveCursorTo(editor, 10, 0);
         // move to next fuzzy message and check new position
         vscgettext.moveToNextFuzzyMessage(editor);
         assertCursorAt(editor, 38, 8);

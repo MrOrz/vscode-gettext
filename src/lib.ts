@@ -1,15 +1,6 @@
 import * as vscode from "vscode";
 import { Message, nextFuzzyMessage, nextUntranslatedMessage } from "./message";
-
-export function moveCursorTo(
-  editor: vscode.TextEditor,
-  lineno: number,
-  colno = 0
-): vscode.Position {
-  const position = new vscode.Position(lineno, colno);
-  editor.selection = new vscode.Selection(position, position);
-  return position;
-}
+import { moveCursorTo } from "./moving";
 
 export function moveToNextUntranslatedMessage(editor: vscode.TextEditor) {
   focusOnNextTarget(editor, nextUntranslatedMessage);
