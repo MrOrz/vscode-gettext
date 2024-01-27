@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { Message } from "./message";
+import { Message } from "./message_type";
 import { moveCursorTo } from "./moving";
 
 export function focusOnNextTarget(
