@@ -23,7 +23,7 @@ export class MessageParser {
   }
 
   private currentMessageDefinition(): Message {
-    const firstline = currentMessageStart(this.document, this.currentline);
+    const firstline = this.currentMessageStart();
     if (firstline === null) {
       return null;
     }
@@ -82,36 +82,33 @@ export class MessageParser {
 
     return message;
   }
-}
 
-function currentMessageStart(
-  document: vscode.TextDocument,
-  currentLine: number
-): vscode.TextLine {
-  let startLine = null;
+  private currentMessageStart(): vscode.TextLine {
+    let startLine = null;
 
-  // go backwards to msgid definition
-  for (const line of backwardDocumentLines(document, currentLine)) {
-    if (msgstrStartRgx.test(line.text) && startLine !== null) {
-      // we hit a msgstr but we already hit a msgid definition, it means
-      // that we've reached another message definition, return the line of
-      // the msgid hit.
-      return startLine;
+    // go backwards to msgid definition
+    for (const line of backwardDocumentLines(this.document, this.currentline)) {
+      if (msgstrStartRgx.test(line.text) && startLine !== null) {
+        // we hit a msgstr but we already hit a msgid definition, it means
+        // that we've reached another message definition, return the line of
+        // the msgid hit.
+        return startLine;
+      }
+
+      const isComment = line.text && line.text.trim().startsWith("#");
+
+      if (
+        isComment ||
+        msgctxtStartRgx.test(line.text) ||
+        msgidStartRgx.test(line.text) ||
+        msgstrStartRgx.test(line.text)
+      ) {
+        startLine = line;
+      }
     }
 
-    const isComment = line.text && line.text.trim().startsWith("#");
-
-    if (
-      isComment ||
-      msgctxtStartRgx.test(line.text) ||
-      msgidStartRgx.test(line.text) ||
-      msgstrStartRgx.test(line.text)
-    ) {
-      startLine = line;
-    }
+    // if we've reached the beginning of the file, msgidLine won't have been set
+    // and we'll return null in that case.
+    return startLine;
   }
-
-  // if we've reached the beginning of the file, msgidLine won't have been set
-  // and we'll return null in that case.
-  return startLine;
 }
