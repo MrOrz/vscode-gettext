@@ -1,10 +1,5 @@
 import * as vscode from "vscode";
-import {
-  Message,
-  previousMessage,
-  nextMessage,
-  currentMessageDefinition,
-} from "./message";
+import { Message, nextFuzzyMessage, nextUntranslatedMessage } from "./message";
 
 export function moveCursorTo(
   editor: vscode.TextEditor,
@@ -39,50 +34,6 @@ function focusOnMessage(editor: vscode.TextEditor, message: Message) {
     vscode.TextEditorRevealType.InCenterIfOutsideViewport
   );
 }
-
-function nextMessagWithCondition(
-  document: vscode.TextDocument,
-  lineno: number,
-  condition: Function,
-  backwards = false
-): Message {
-  let message = currentMessageDefinition(document, lineno);
-  const getMessage = backwards ? previousMessage : nextMessage;
-  while (message !== null) {
-    message = getMessage(document, message);
-    if (message && condition(message)) {
-      return message;
-    }
-  }
-  return null;
-}
-
-function nextUntranslatedMessage(
-  document: vscode.TextDocument,
-  lineno: number,
-  backwards = false
-): Message {
-  return nextMessagWithCondition(
-    document,
-    lineno,
-    (message) => !message.msgstr,
-    backwards
-  );
-}
-
-function nextFuzzyMessage(
-  document: vscode.TextDocument,
-  lineno: number,
-  backwards = false
-): Message {
-  return nextMessagWithCondition(
-    document,
-    lineno,
-    (message) => message.isfuzzy,
-    backwards
-  );
-}
-
 function focusOnNextTarget(
   editor: vscode.TextEditor,
   nextTargetFunc: Function,
