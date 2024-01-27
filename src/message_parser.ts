@@ -39,50 +39,89 @@ export class MessageParser {
     this.message.firstline = firstline.lineNumber;
     this.message.lastline = firstline.lineNumber;
 
-    let currentProperty: string;
-    for (const line of documentLines(this.document, this.message.firstline)) {
-      // Comments (optional), msgctxt (optional), msgid, and msgstr appear in this order.
-
-      if (fuzzyRgx.test(line.text)) {
-        if (this.message.msgid !== null) {
-          break;
-        } else {
-          this.message.isfuzzy = true;
-        }
-      } else if (
-        line.text.trim().startsWith("#") &&
-        this.message.msgid !== null
-      ) {
-        break;
-      } else if (msgctxtStartRgx.test(line.text)) {
-        if (this.message.msgctxt !== null || this.message.msgid !== null) {
-          break; // we are now on the next message, definition is over
-        } else {
-          this.message.msgctxt = msgctxtStartRgx.exec(line.text)[1];
-          this.message.msgctxtLine = line.lineNumber;
-          currentProperty = "msgctxt";
-        }
-      } else if (msgidStartRgx.test(line.text)) {
-        if (this.message.msgid !== null) {
-          break; // we are now on the next message, definition is over
-        } else {
-          this.message.msgid = msgidStartRgx.exec(line.text)[1];
-          this.message.msgidLine = line.lineNumber;
-          currentProperty = "msgid";
-        }
-      } else if (msgstrStartRgx.test(line.text)) {
-        this.message.msgstr = msgstrStartRgx.exec(line.text)[1];
-        this.message.msgstrLine = line.lineNumber;
-        currentProperty = "msgstr";
-      } else if (continuationLineRgx.test(line.text)) {
-        this.message[currentProperty] += continuationLineRgx.exec(line.text)[1];
-      }
-      this.message.lastline++;
-    }
-
-    this.message.lastline--; // last line is the one before the next message definition
+    this.parseComments();
+    this.parseMsgctxt();
+    this.parseMsgid();
+    this.parseMsgstr();
 
     return this.message;
+  }
+
+  private parseComments() {
+    for (const line of documentLines(this.document, this.message.lastline)) {
+      if (!line.text.trim().startsWith("#")) {
+        return;
+      }
+
+      this.message.lastline++;
+
+      if (fuzzyRgx.test(line.text)) {
+        this.message.isfuzzy = true;
+      }
+    }
+  }
+
+  private parseMsgctxt() {
+    let firstLine = this.document.lineAt(this.message.lastline);
+
+    if (!msgctxtStartRgx.test(firstLine.text)) {
+      return;
+    }
+
+    this.message.msgctxt = msgctxtStartRgx.exec(firstLine.text)[1];
+    this.message.msgctxtLine = firstLine.lineNumber;
+    this.message.lastline++;
+
+    for (const line of documentLines(this.document, this.message.lastline)) {
+      if (continuationLineRgx.test(line.text)) {
+        this.message.msgctxt += continuationLineRgx.exec(line.text)[1];
+        this.message.lastline++;
+      } else {
+        return;
+      }
+    }
+  }
+
+  private parseMsgid() {
+    let firstLine = this.document.lineAt(this.message.lastline);
+
+    if (!msgidStartRgx.test(firstLine.text)) {
+      return;
+    }
+
+    this.message.msgid = msgidStartRgx.exec(firstLine.text)[1];
+    this.message.msgidLine = firstLine.lineNumber;
+    this.message.lastline++;
+
+    for (const line of documentLines(this.document, this.message.lastline)) {
+      if (continuationLineRgx.test(line.text)) {
+        this.message.msgid += continuationLineRgx.exec(line.text)[1];
+        this.message.lastline++;
+      } else {
+        return;
+      }
+    }
+  }
+
+  private parseMsgstr() {
+    let firstLine = this.document.lineAt(this.message.lastline);
+
+    if (!msgstrStartRgx.test(firstLine.text)) {
+      return;
+    }
+
+    this.message.msgstr = msgstrStartRgx.exec(firstLine.text)[1];
+    this.message.msgstrLine = firstLine.lineNumber;
+    this.message.lastline++;
+
+    for (const line of documentLines(this.document, this.message.lastline)) {
+      if (continuationLineRgx.test(line.text)) {
+        this.message.msgstr += continuationLineRgx.exec(line.text)[1];
+        this.message.lastline++;
+      } else {
+        return;
+      }
+    }
   }
 
   private currentMessageStart(): vscode.TextLine {
