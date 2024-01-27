@@ -24,8 +24,8 @@ export class MessageParser {
       msgstrLine: null,
       msgctxt: null,
       msgctxtLine: null,
-      firstline: this.currentMessageStart().lineNumber,
-      lastline: this.currentMessageStart().lineNumber,
+      firstline: null,
+      lastline: null,
       isfuzzy: false,
     };
   }
@@ -35,6 +35,9 @@ export class MessageParser {
     if (firstline === null) {
       return null;
     }
+
+    this.message.firstline = firstline.lineNumber;
+    this.message.lastline = firstline.lineNumber;
 
     let currentProperty: string;
     for (const line of documentLines(this.document, this.message.firstline)) {
