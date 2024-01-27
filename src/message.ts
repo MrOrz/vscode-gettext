@@ -19,23 +19,6 @@ export type Message = {
   isfuzzy: boolean;
 };
 
-function nextMessagWithCondition(
-  document: vscode.TextDocument,
-  lineno: number,
-  condition: Function,
-  backwards = false
-): Message {
-  let message = currentMessageDefinition(document, lineno);
-  const getMessage = backwards ? previousMessage : nextMessage;
-  while (message !== null) {
-    message = getMessage(document, message);
-    if (message && condition(message)) {
-      return message;
-    }
-  }
-  return null;
-}
-
 export function nextUntranslatedMessage(
   document: vscode.TextDocument,
   lineno: number,
@@ -60,6 +43,23 @@ export function nextFuzzyMessage(
     (message) => message.isfuzzy,
     backwards
   );
+}
+
+function nextMessagWithCondition(
+  document: vscode.TextDocument,
+  lineno: number,
+  condition: Function,
+  backwards = false
+): Message {
+  let message = currentMessageDefinition(document, lineno);
+  const getMessage = backwards ? previousMessage : nextMessage;
+  while (message !== null) {
+    message = getMessage(document, message);
+    if (message && condition(message)) {
+      return message;
+    }
+  }
+  return null;
 }
 
 function nextMessage(
