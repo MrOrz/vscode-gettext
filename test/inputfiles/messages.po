@@ -57,3 +57,6 @@ msgstr[1] ""
 msgid "manga"
 msgid_plural "mangas"
 msgstr[0] "animeo"
+
+msgid "msg"
+msgstr "msgstr"

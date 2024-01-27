@@ -175,4 +175,16 @@ suite("vscode-gettext tests", () => {
       })
       .then(done, done);
   });
+
+  test("jump to the previous fuzzy singular message", (done) => {
+    openFile(inputpath("messages.po"))
+      .then((editor) => {
+        // put the cursor on the last fuzzy singular message
+        moveCursorTo(editor, 62, 0);
+        // move to next fuzzy singular message and check new position
+        vscgettext.moveToPreviousFuzzyMessage(editor);
+        assertCursorAt(editor, 58, 11);
+      })
+      .then(done, done);
+  });
 });
