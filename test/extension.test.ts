@@ -115,4 +115,16 @@ suite("vscode-gettext tests", () => {
       })
       .then(done, done);
   });
+
+  test("jump to the next untranslated singular message", (done) => {
+    openFile(inputpath("messages.po"))
+      .then((editor) => {
+        // put the cursor somewhere in the file
+        moveCursorTo(editor, 45, 0);
+        // move to next untranslated singular message and check new position
+        vscgettext.moveToNextUntranslatedMessage(editor);
+        assertCursorAt(editor, 48, 12);
+      })
+      .then(done, done);
+  });
 });

@@ -41,3 +41,8 @@ msgstr "old translation"
 msgctxt "Person"
 msgid "agent_type"
 msgstr ""
+
+msgid "apple"
+msgid_plural "apples"
+msgstr[0] ""
+msgstr[1] ""
