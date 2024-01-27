@@ -7,6 +7,7 @@ import {
   continuationLineRgx,
 } from "./regex";
 import { Message } from "./message_type";
+import { documentLines, backwardDocumentLines } from "./lines";
 
 export function nextUntranslatedMessage(
   document: vscode.TextDocument,
@@ -172,19 +173,4 @@ function currentMessageStart(
   // if we've reached the beginning of the file, msgidLine won't have been set
   // and we'll return null in that case.
   return startLine;
-}
-
-function* backwardDocumentLines(
-  document: vscode.TextDocument,
-  startline = document.lineCount - 1
-) {
-  for (let lineno = startline; lineno >= 0; lineno--) {
-    yield document.lineAt(lineno);
-  }
-}
-
-function* documentLines(document: vscode.TextDocument, startline = 0) {
-  for (let lineno = startline; lineno < document.lineCount; lineno++) {
-    yield document.lineAt(lineno);
-  }
 }
