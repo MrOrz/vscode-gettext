@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { Message, nextFuzzyMessage, nextUntranslatedMessage } from "./message";
+import { nextFuzzyMessage, nextUntranslatedMessage } from "./message";
 import { focusOnNextTarget } from "./focusing";
 
 export function moveToNextUntranslatedMessage(editor: vscode.TextEditor) {
