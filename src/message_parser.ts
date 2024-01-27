@@ -31,10 +31,6 @@ export class MessageParser {
   }
 
   public parse(): Message {
-    return this.currentMessageDefinition();
-  }
-
-  private currentMessageDefinition(): Message {
     const firstline = this.currentMessageStart();
     if (firstline === null) {
       return null;
