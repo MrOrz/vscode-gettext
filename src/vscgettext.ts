@@ -8,8 +8,8 @@ import {
   moveToPreviousUntranslatedMessage,
   moveToNextFuzzyMessage,
   moveToPreviousFuzzyMessage,
-  provideDefinition,
 } from "./lib";
+import provideDefinition from "./provide_definition";
 
 export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
