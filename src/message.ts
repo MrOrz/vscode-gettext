@@ -62,7 +62,7 @@ export function nextFuzzyMessage(
   );
 }
 
-export function nextMessage(
+function nextMessage(
   document: vscode.TextDocument,
   currentMessage: Message
 ): Message {
@@ -74,7 +74,7 @@ export function nextMessage(
   return null;
 }
 
-export function previousMessage(
+function previousMessage(
   document: vscode.TextDocument,
   currentMessage: Message
 ): Message {
@@ -89,7 +89,7 @@ export function previousMessage(
   return null;
 }
 
-export function currentMessageDefinition(
+function currentMessageDefinition(
   document: vscode.TextDocument,
   currentline: number
 ): Message {
