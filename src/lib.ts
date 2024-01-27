@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { Message } from "./message";
 
 const fuzzyRgx = /^#, fuzzy/;
 
@@ -10,18 +11,6 @@ const msgctxtStartRgx = regexWithKey("msgctxt");
 const msgidStartRgx = regexWithKey("msgid");
 const msgstrStartRgx = regexWithKey("msgstr");
 const continuationLineRgx = /^"(.*?)\s*"$/;
-
-type Message = {
-  msgid: string;
-  msgidLine: number;
-  msgstr: string;
-  msgstrLine: number;
-  msgctxt: string;
-  msgctxtLine: number;
-  firstline: number;
-  lastline: number;
-  isfuzzy: boolean;
-};
 
 export function moveCursorTo(
   editor: vscode.TextEditor,
