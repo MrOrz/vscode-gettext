@@ -12,10 +12,22 @@ import {
 export class MessageParser {
   document: vscode.TextDocument;
   currentline: number;
+  message: Message;
 
   public constructor(document: vscode.TextDocument, currentline: number) {
     this.document = document;
     this.currentline = currentline;
+    this.message = {
+      msgid: null,
+      msgidLine: null,
+      msgstr: null,
+      msgstrLine: null,
+      msgctxt: null,
+      msgctxtLine: null,
+      firstline: this.currentMessageStart().lineNumber,
+      lastline: this.currentMessageStart().lineNumber,
+      isfuzzy: false,
+    };
   }
 
   public parse(): Message {
@@ -29,58 +41,49 @@ export class MessageParser {
     }
 
     let currentProperty: string;
-    const message: Message = {
-      msgid: null,
-      msgidLine: null,
-      msgstr: null,
-      msgstrLine: null,
-      msgctxt: null,
-      msgctxtLine: null,
-      firstline: firstline.lineNumber,
-      lastline: firstline.lineNumber,
-      isfuzzy: false,
-    };
-
-    for (const line of documentLines(this.document, message.firstline)) {
+    for (const line of documentLines(this.document, this.message.firstline)) {
       // Comments (optional), msgctxt (optional), msgid, and msgstr appear in this order.
 
       if (fuzzyRgx.test(line.text)) {
-        if (message.msgid !== null) {
+        if (this.message.msgid !== null) {
           break;
         } else {
-          message.isfuzzy = true;
+          this.message.isfuzzy = true;
         }
-      } else if (line.text.trim().startsWith("#") && message.msgid !== null) {
+      } else if (
+        line.text.trim().startsWith("#") &&
+        this.message.msgid !== null
+      ) {
         break;
       } else if (msgctxtStartRgx.test(line.text)) {
-        if (message.msgctxt !== null || message.msgid !== null) {
+        if (this.message.msgctxt !== null || this.message.msgid !== null) {
           break; // we are now on the next message, definition is over
         } else {
-          message.msgctxt = msgctxtStartRgx.exec(line.text)[1];
-          message.msgctxtLine = line.lineNumber;
+          this.message.msgctxt = msgctxtStartRgx.exec(line.text)[1];
+          this.message.msgctxtLine = line.lineNumber;
           currentProperty = "msgctxt";
         }
       } else if (msgidStartRgx.test(line.text)) {
-        if (message.msgid !== null) {
+        if (this.message.msgid !== null) {
           break; // we are now on the next message, definition is over
         } else {
-          message.msgid = msgidStartRgx.exec(line.text)[1];
-          message.msgidLine = line.lineNumber;
+          this.message.msgid = msgidStartRgx.exec(line.text)[1];
+          this.message.msgidLine = line.lineNumber;
           currentProperty = "msgid";
         }
       } else if (msgstrStartRgx.test(line.text)) {
-        message.msgstr = msgstrStartRgx.exec(line.text)[1];
-        message.msgstrLine = line.lineNumber;
+        this.message.msgstr = msgstrStartRgx.exec(line.text)[1];
+        this.message.msgstrLine = line.lineNumber;
         currentProperty = "msgstr";
       } else if (continuationLineRgx.test(line.text)) {
-        message[currentProperty] += continuationLineRgx.exec(line.text)[1];
+        this.message[currentProperty] += continuationLineRgx.exec(line.text)[1];
       }
-      message.lastline++;
+      this.message.lastline++;
     }
 
-    message.lastline--; // last line is the one before the next message definition
+    this.message.lastline--; // last line is the one before the next message definition
 
-    return message;
+    return this.message;
   }
 
   private currentMessageStart(): vscode.TextLine {
