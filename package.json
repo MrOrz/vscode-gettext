@@ -25,6 +25,8 @@
     "activationEvents": [
         "onCommand:vscgettext.moveToNextUntranslated",
         "onCommand:vscgettext.moveToPreviousUntranslated",
+        "onCommand:vscgettext.moveToNextFuzzy",
+        "onCommand:vscgettext.moveToPreviousFuzzy",
         "onLanguage:po",
         "onLanguage:pot",
         "onLanguage:potx"
@@ -61,6 +63,16 @@
             {
                 "command": "vscgettext.moveToPreviousUntranslated",
                 "key": "alt+shift+n",
+                "when": "editorTextFocus && resourceLangId == po"
+            },
+            {
+                "command": "vscgettext.moveToNextFuzzy",
+                "key": "alt+f",
+                "when": "editorTextFocus && resourceLangId == po"
+            },
+            {
+                "command": "vscgettext.moveToPreviousFuzzy",
+                "key": "alt+shift+f",
                 "when": "editorTextFocus && resourceLangId == po"
             }
         ]

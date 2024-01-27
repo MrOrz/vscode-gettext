@@ -33,6 +33,11 @@ msgid ""
 msgstr ""
 "translation on several lines too."
 
+#, fuzzy, other-flags
+#| msgid "old text"
+msgid "new text"
+msgstr "old translation"
+
 msgctxt "Person"
 msgid "agent_type"
 msgstr ""

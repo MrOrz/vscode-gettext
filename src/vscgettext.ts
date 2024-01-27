@@ -8,6 +8,7 @@ const msgidStartRgx = /^msgid\s+"(.*?)"\s*$/;
 const msgstrStartRgx = /^msgstr\s+"(.*?)"\s*$/;
 const msgctxtStartRgx = /^msgctxt\s+"(.*?)"\s*$/;
 const continuationLineRgx = /^"(.*?)\s*"$/;
+const fuzzyRgx = /^#, fuzzy/;
 
 interface IMessage {
     msgid: string;
@@ -18,6 +19,7 @@ interface IMessage {
     msgctxtLine: number;
     firstline: number;
     lastline: number;
+    isfuzzy: boolean;
 }
 
 export function moveCursorTo(editor: vscode.TextEditor, lineno: number, colno = 0): vscode.Position {
@@ -65,30 +67,32 @@ function previousMessage(document: vscode.TextDocument, currentMessage: IMessage
 }
 
 function currentMessageStart(document: vscode.TextDocument, currentLine: number): vscode.TextLine {
-    let msgidLine = null;
+    let startLine = null;
+
+    // Comments (optional), msgctxt (optional), msgid, and msgstr appear in this order.
+    
     // go backwards to msgid definition
     for (const line of backwardDocumentLines(document, currentLine)) {
-        if (msgidStartRgx.test(line.text)) {
-            // we hit a msgid which is good, but we still need to go backwards
-            // to check if we hit a msgctxt
-            msgidLine = line;
-            continue;
-        }
-        if (msgctxtStartRgx.test(line.text)) {
-            // if we're on a msgctxt definition, this is the current message
-            // definition start
-            return line;
-        }
-        if (msgstrStartRgx.test(line.text) && msgidLine !== null) {
+        const isComment = line.text && line.text.trim().startsWith('#');
+
+        if (msgstrStartRgx.test(line.text) && startLine !== null) {
             // we hit a msgstr but we already hit a msgid definition, it means
             // that we've reached another message definition, return the line of
             // the msgid hit.
-            return msgidLine;
+            return startLine;
+        }
+
+        if (isComment 
+            || msgctxtStartRgx.test(line.text)
+            || msgidStartRgx.test(line.text)
+            || msgstrStartRgx.test(line.text)) {
+            startLine = line;
+            continue;
         }
     }
     // if we've reached the beginning of the file, msgidLine won't have been set
     // and we'll return null in that case.
-    return msgidLine;
+    return startLine;
 }
 
 export function currentMessageDefinition(document: vscode.TextDocument, currentline: number): IMessage {
@@ -107,42 +111,45 @@ export function currentMessageDefinition(document: vscode.TextDocument, currentl
         msgctxtLine: null,
         firstline: firstline.lineNumber,
         lastline: firstline.lineNumber,
+        isfuzzy: false,
     };
 
-    if (msgctxtStartRgx.test(firstline.text)) {
-        currentProperty = 'msgctxt';
-        message.msgctxt = msgctxtStartRgx.exec(firstline.text)[1];
-        message.msgctxtLine = firstline.lineNumber;
-    } else {
-        currentProperty = 'msgid';
-        message.msgid = msgidStartRgx.exec(firstline.text)[1];
-        message.msgidLine = firstline.lineNumber;
-    }
-
-    for (const line of documentLines(document, message.firstline + 1)) {
-        if (msgctxtStartRgx.test(line.text)) {
+    for (const line of documentLines(document, message.firstline)) {
+        if (fuzzyRgx.test(line.text)) {
+            if (message.msgid !== null) {
+                break;
+            } else {
+                message.isfuzzy = true;
+            }
+        } else if (line.text.trim().startsWith('#') && message.msgid !== null) {
             break;
-        }
-        if (msgidStartRgx.test(line.text)) {
+        } else if (msgctxtStartRgx.test(line.text)) {
+            if (message.msgctxt !== null || message.msgid !== null) {
+                break;
+            } else {
+                message.msgctxt = msgctxtStartRgx.exec(line.text)[1];
+                message.msgctxtLine = line.lineNumber;
+                currentProperty = 'msgctxt';
+            }
+        } else if (msgidStartRgx.test(line.text)) {
             if (message.msgid !== null) {
                 break;  // we are now on the next message, definition is over
+            } else {
+                message.msgid = msgidStartRgx.exec(line.text)[1];
+                message.msgidLine = line.lineNumber;
+                currentProperty = 'msgid';
             }
-            message.msgid = msgidStartRgx.exec(line.text)[1];
-            message.msgidLine = line.lineNumber;
-            currentProperty = 'msgid';
-        }
-        if (msgstrStartRgx.test(line.text)) {
+        } else if (msgstrStartRgx.test(line.text)) {
             message.msgstr = msgstrStartRgx.exec(line.text)[1];
             message.msgstrLine = line.lineNumber;
             currentProperty = 'msgstr';
-        } else if (msgctxtStartRgx.test(line.text)) {
-            message.msgctxt = msgctxtStartRgx.exec(line.text)[1];
-            currentProperty = 'msgctxt';
         } else if (continuationLineRgx.test(line.text)) {
             message[currentProperty] += continuationLineRgx.exec(line.text)[1];
         }
         message.lastline++;
     }
+
+    message.lastline--;  // last line is the one before the next message definition
 
     return message;
 }
@@ -159,9 +166,29 @@ function nextUntranslatedMessage(document: vscode.TextDocument, lineno: number, 
     return null;
 }
 
+function nextFuzzyMessage(document: vscode.TextDocument, lineno: number, backwards = false): IMessage {
+    let message = currentMessageDefinition(document, lineno);
+    const messageIterator = backwards ? previousMessage : nextMessage;
+    while (message !== null) {
+        message = messageIterator(document, message);
+        if (message && message.isfuzzy) {
+            return message;
+        }
+    }
+    return null;
+}
+
 function focusOnNextUntranslated(editor: vscode.TextEditor, backwards = false) {
     const position = editor.selection.active;
     const message = nextUntranslatedMessage(editor.document, position.line, backwards);
+    if (message !== null) {
+        focusOnMessage(editor, message);
+    }
+}
+
+function focusOnNextFuzzy(editor: vscode.TextEditor, backwards = false) {
+    const position = editor.selection.active;
+    const message = nextFuzzyMessage(editor.document, position.line, backwards);
     if (message !== null) {
         focusOnMessage(editor, message);
     }
@@ -173,6 +200,14 @@ export function moveToNextUntranslatedMessage(editor: vscode.TextEditor) {
 
 export function moveToPreviousUntranslatedMessage(editor: vscode.TextEditor) {
     focusOnNextUntranslated(editor, true);
+}
+
+export function moveToNextFuzzyMessage(editor: vscode.TextEditor) {
+    focusOnNextFuzzy(editor);
+}
+
+export function moveToPreviousFuzzyMessage(editor: vscode.TextEditor) {
+    focusOnNextFuzzy(editor, true);
 }
 
 export function provideDefinition(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken) {
@@ -211,6 +246,12 @@ export function activate(context: vscode.ExtensionContext) {
     );
     context.subscriptions.push(
         vscode.commands.registerTextEditorCommand('vscgettext.moveToPreviousUntranslated', moveToPreviousUntranslatedMessage)
+    );
+    context.subscriptions.push(
+        vscode.commands.registerTextEditorCommand('vscgettext.moveToNextFuzzy', moveToNextFuzzyMessage)
+    );
+    context.subscriptions.push(
+        vscode.commands.registerTextEditorCommand('vscgettext.moveToPreviousFuzzy', moveToPreviousFuzzyMessage)
     );
     context.subscriptions.push(
         vscode.languages.registerDefinitionProvider('po', { provideDefinition })
