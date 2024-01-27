@@ -151,4 +151,16 @@ suite("vscode-gettext tests", () => {
       })
       .then(done, done);
   });
+
+  test("jump to the previous untranslated plural message", (done) => {
+    openFile(inputpath("messages.po"))
+      .then((editor) => {
+        // put the cursor on the last untranslated plural message
+        moveCursorTo(editor, 53, 0);
+        // move to next untranslated plural message and check new position
+        vscgettext.moveToPreviousUntranslatedMessage(editor);
+        assertCursorAt(editor, 52, 11);
+      })
+      .then(done, done);
+  });
 });
