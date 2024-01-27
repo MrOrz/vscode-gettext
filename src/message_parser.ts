@@ -62,61 +62,36 @@ export class MessageParser {
   }
 
   private parseMsgctxt() {
-    let firstLine = this.document.lineAt(this.message.lastline);
-
-    if (!msgctxtStartRgx.test(firstLine.text)) {
-      return;
-    }
-
-    this.message.msgctxt = msgctxtStartRgx.exec(firstLine.text)[1];
-    this.message.msgctxtLine = firstLine.lineNumber;
-    this.message.lastline++;
-
-    for (const line of documentLines(this.document, this.message.lastline)) {
-      if (continuationLineRgx.test(line.text)) {
-        this.message.msgctxt += continuationLineRgx.exec(line.text)[1];
-        this.message.lastline++;
-      } else {
-        return;
-      }
-    }
+    this.message.msgctxt = "";
+    this.parseWithKey("msgctxt", (value) => (this.message.msgctxt += value));
   }
 
   private parseMsgid() {
-    let firstLine = this.document.lineAt(this.message.lastline);
-
-    if (!msgidStartRgx.test(firstLine.text)) {
-      return;
-    }
-
-    this.message.msgid = msgidStartRgx.exec(firstLine.text)[1];
-    this.message.msgidLine = firstLine.lineNumber;
-    this.message.lastline++;
-
-    for (const line of documentLines(this.document, this.message.lastline)) {
-      if (continuationLineRgx.test(line.text)) {
-        this.message.msgid += continuationLineRgx.exec(line.text)[1];
-        this.message.lastline++;
-      } else {
-        return;
-      }
-    }
+    this.message.msgid = "";
+    this.parseWithKey("msgid", (value) => (this.message.msgid += value));
   }
 
   private parseMsgstr() {
+    this.message.msgstr = "";
+    this.parseWithKey("msgstr", (value) => (this.message.msgstr += value));
+  }
+
+  private parseWithKey(key: string, setter: (value: string) => void) {
+    const regex = new RegExp(`^${key}\\s+"(.*)"$`);
+
     let firstLine = this.document.lineAt(this.message.lastline);
 
-    if (!msgstrStartRgx.test(firstLine.text)) {
+    if (!regex.test(firstLine.text)) {
       return;
     }
 
-    this.message.msgstr = msgstrStartRgx.exec(firstLine.text)[1];
+    setter(regex.exec(firstLine.text)[1]);
     this.message.msgstrLine = firstLine.lineNumber;
     this.message.lastline++;
 
     for (const line of documentLines(this.document, this.message.lastline)) {
       if (continuationLineRgx.test(line.text)) {
-        this.message.msgstr += continuationLineRgx.exec(line.text)[1];
+        setter(continuationLineRgx.exec(line.text)[1]);
         this.message.lastline++;
       } else {
         return;
