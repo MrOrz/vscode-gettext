@@ -19,72 +19,69 @@ export class MessageParser {
   }
 
   public parse(): Message {
-    return currentMessageDefinition(this.document, this.currentline);
-  }
-}
-
-function currentMessageDefinition(
-  document: vscode.TextDocument,
-  currentline: number
-): Message {
-  const firstline = currentMessageStart(document, currentline);
-  if (firstline === null) {
-    return null;
+    return this.currentMessageDefinition();
   }
 
-  let currentProperty: string;
-  const message: Message = {
-    msgid: null,
-    msgidLine: null,
-    msgstr: null,
-    msgstrLine: null,
-    msgctxt: null,
-    msgctxtLine: null,
-    firstline: firstline.lineNumber,
-    lastline: firstline.lineNumber,
-    isfuzzy: false,
-  };
-
-  for (const line of documentLines(document, message.firstline)) {
-    // Comments (optional), msgctxt (optional), msgid, and msgstr appear in this order.
-
-    if (fuzzyRgx.test(line.text)) {
-      if (message.msgid !== null) {
-        break;
-      } else {
-        message.isfuzzy = true;
-      }
-    } else if (line.text.trim().startsWith("#") && message.msgid !== null) {
-      break;
-    } else if (msgctxtStartRgx.test(line.text)) {
-      if (message.msgctxt !== null || message.msgid !== null) {
-        break; // we are now on the next message, definition is over
-      } else {
-        message.msgctxt = msgctxtStartRgx.exec(line.text)[1];
-        message.msgctxtLine = line.lineNumber;
-        currentProperty = "msgctxt";
-      }
-    } else if (msgidStartRgx.test(line.text)) {
-      if (message.msgid !== null) {
-        break; // we are now on the next message, definition is over
-      } else {
-        message.msgid = msgidStartRgx.exec(line.text)[1];
-        message.msgidLine = line.lineNumber;
-        currentProperty = "msgid";
-      }
-    } else if (msgstrStartRgx.test(line.text)) {
-      message.msgstr = msgstrStartRgx.exec(line.text)[1];
-      message.msgstrLine = line.lineNumber;
-      currentProperty = "msgstr";
-    } else if (continuationLineRgx.test(line.text)) {
-      message[currentProperty] += continuationLineRgx.exec(line.text)[1];
+  private currentMessageDefinition(): Message {
+    const firstline = currentMessageStart(this.document, this.currentline);
+    if (firstline === null) {
+      return null;
     }
-    message.lastline++;
+
+    let currentProperty: string;
+    const message: Message = {
+      msgid: null,
+      msgidLine: null,
+      msgstr: null,
+      msgstrLine: null,
+      msgctxt: null,
+      msgctxtLine: null,
+      firstline: firstline.lineNumber,
+      lastline: firstline.lineNumber,
+      isfuzzy: false,
+    };
+
+    for (const line of documentLines(this.document, message.firstline)) {
+      // Comments (optional), msgctxt (optional), msgid, and msgstr appear in this order.
+
+      if (fuzzyRgx.test(line.text)) {
+        if (message.msgid !== null) {
+          break;
+        } else {
+          message.isfuzzy = true;
+        }
+      } else if (line.text.trim().startsWith("#") && message.msgid !== null) {
+        break;
+      } else if (msgctxtStartRgx.test(line.text)) {
+        if (message.msgctxt !== null || message.msgid !== null) {
+          break; // we are now on the next message, definition is over
+        } else {
+          message.msgctxt = msgctxtStartRgx.exec(line.text)[1];
+          message.msgctxtLine = line.lineNumber;
+          currentProperty = "msgctxt";
+        }
+      } else if (msgidStartRgx.test(line.text)) {
+        if (message.msgid !== null) {
+          break; // we are now on the next message, definition is over
+        } else {
+          message.msgid = msgidStartRgx.exec(line.text)[1];
+          message.msgidLine = line.lineNumber;
+          currentProperty = "msgid";
+        }
+      } else if (msgstrStartRgx.test(line.text)) {
+        message.msgstr = msgstrStartRgx.exec(line.text)[1];
+        message.msgstrLine = line.lineNumber;
+        currentProperty = "msgstr";
+      } else if (continuationLineRgx.test(line.text)) {
+        message[currentProperty] += continuationLineRgx.exec(line.text)[1];
+      }
+      message.lastline++;
+    }
+
+    message.lastline--; // last line is the one before the next message definition
+
+    return message;
   }
-
-  message.lastline--; // last line is the one before the next message definition
-
-  return message;
 }
 
 function currentMessageStart(
