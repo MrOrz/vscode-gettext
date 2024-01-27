@@ -51,3 +51,9 @@ msgid "banana"
 msgid_plural "bananas"
 msgstr[0] "banano"
 msgstr[1] ""
+
+#, fuzzy
+#| msgid "anime"
+msgid "manga"
+msgid_plural "mangas"
+msgstr[0] "animeo"

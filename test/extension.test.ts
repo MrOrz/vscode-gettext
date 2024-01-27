@@ -60,10 +60,10 @@ suite("vscode-gettext tests", () => {
     openFile(inputpath("messages.po"))
       .then((editor) => {
         // put the cursor somewhere in the file
-        moveCursorTo(editor, 53, 0);
+        moveCursorTo(editor, 59, 0);
         // move to next untranslated message and check new position
         vscgettext.moveToNextUntranslatedMessage(editor);
-        assertCursorAt(editor, 53, 0);
+        assertCursorAt(editor, 59, 0);
       })
       .then(done, done);
   });
@@ -160,6 +160,18 @@ suite("vscode-gettext tests", () => {
         // move to next untranslated plural message and check new position
         vscgettext.moveToPreviousUntranslatedMessage(editor);
         assertCursorAt(editor, 52, 11);
+      })
+      .then(done, done);
+  });
+
+  test("jump to the next fuzzy singular message", (done) => {
+    openFile(inputpath("messages.po"))
+      .then((editor) => {
+        // put the cursor on the first fuzzy singular message
+        moveCursorTo(editor, 53, 0);
+        // move to next fuzzy singular message and check new position
+        vscgettext.moveToNextFuzzyMessage(editor);
+        assertCursorAt(editor, 58, 11);
       })
       .then(done, done);
   });

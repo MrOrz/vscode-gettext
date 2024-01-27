@@ -29,7 +29,7 @@ function focusOnMessage(editor: vscode.TextEditor, message: Message) {
 
 function msgstrPosition(message: Message): [number, number] {
   for (const [index, line] of message.msgstrPluralLine.entries()) {
-    if (!message.msgstrPlural[index]) {
+    if (!message.msgstrPlural[index] || message.isfuzzy) {
       return index === 0
         ? [line, 11]
         : [line, 11 + Math.floor(Math.log10(index))];
