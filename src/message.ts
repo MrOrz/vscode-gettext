@@ -194,7 +194,7 @@ function* backwardDocumentLines(
   }
 }
 
-function* documentLines(document: vscode.TextDocument, startline = 1) {
+function* documentLines(document: vscode.TextDocument, startline = 0) {
   for (let lineno = startline; lineno < document.lineCount; lineno++) {
     yield document.lineAt(lineno);
   }
