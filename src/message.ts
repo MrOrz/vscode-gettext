@@ -14,7 +14,7 @@ export function nextUntranslatedMessage(
   lineno: number,
   backwards = false
 ): Message {
-  return nextMessagWithCondition(
+  return nextMessageWithCondition(
     document,
     lineno,
     (message) => !message.msgstr,
@@ -27,7 +27,7 @@ export function nextFuzzyMessage(
   lineno: number,
   backwards = false
 ): Message {
-  return nextMessagWithCondition(
+  return nextMessageWithCondition(
     document,
     lineno,
     (message) => message.isfuzzy,
@@ -35,7 +35,7 @@ export function nextFuzzyMessage(
   );
 }
 
-function nextMessagWithCondition(
+function nextMessageWithCondition(
   document: vscode.TextDocument,
   lineno: number,
   condition: Function,
