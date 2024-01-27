@@ -27,6 +27,8 @@
         "onCommand:vscgettext.moveToPreviousUntranslated",
         "onCommand:vscgettext.moveToNextFuzzy",
         "onCommand:vscgettext.moveToPreviousFuzzy",
+        "onCommand:vscgettext.moveToNextUntranslatedOrFuzzy",
+        "onCommand:vscgettext.moveToPreviousUntranslatedOrFuzzy",
         "onLanguage:po",
         "onLanguage:pot",
         "onLanguage:potx"
