@@ -38,6 +38,11 @@ msgstr ""
 msgid "new text"
 msgstr "old translation"
 
+msgid "foo"
+msgid_plural "foos"
+msgstr[0] "foo"
+msgstr[1] "foos"
+
 msgctxt "Person"
 msgid "agent_type"
 msgstr ""

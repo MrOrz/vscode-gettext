@@ -120,10 +120,10 @@ suite("vscode-gettext tests", () => {
     openFile(inputpath("messages.po"))
       .then((editor) => {
         // put the cursor somewhere in the file
-        moveCursorTo(editor, 43, 0);
+        moveCursorTo(editor, 48, 0);
         // move to next untranslated singular message and check new position
         vscgettext.moveToNextUntranslatedMessage(editor);
-        assertCursorAt(editor, 46, 11);
+        assertCursorAt(editor, 51, 11);
       })
       .then(done, done);
   });
@@ -147,7 +147,7 @@ suite("vscode-gettext tests", () => {
         moveCursorTo(editor, 48, 0);
         // move to next untranslated plural message and check new position
         vscgettext.moveToNextUntranslatedMessage(editor);
-        assertCursorAt(editor, 52, 11);
+        assertCursorAt(editor, 51, 11);
       })
       .then(done, done);
   });
@@ -159,7 +159,7 @@ suite("vscode-gettext tests", () => {
         moveCursorTo(editor, 53, 0);
         // move to next untranslated plural message and check new position
         vscgettext.moveToPreviousUntranslatedMessage(editor);
-        assertCursorAt(editor, 52, 11);
+        assertCursorAt(editor, 51, 11);
       })
       .then(done, done);
   });
@@ -171,7 +171,7 @@ suite("vscode-gettext tests", () => {
         moveCursorTo(editor, 53, 0);
         // move to next fuzzy singular message and check new position
         vscgettext.moveToNextFuzzyMessage(editor);
-        assertCursorAt(editor, 58, 11);
+        assertCursorAt(editor, 63, 11);
       })
       .then(done, done);
   });
@@ -180,10 +180,10 @@ suite("vscode-gettext tests", () => {
     openFile(inputpath("messages.po"))
       .then((editor) => {
         // put the cursor on the last fuzzy singular message
-        moveCursorTo(editor, 62, 0);
+        moveCursorTo(editor, 67, 0);
         // move to next fuzzy singular message and check new position
         vscgettext.moveToPreviousFuzzyMessage(editor);
-        assertCursorAt(editor, 58, 11);
+        assertCursorAt(editor, 63, 11);
       })
       .then(done, done);
   });
