@@ -5,7 +5,9 @@ import {
   fuzzyRgx,
   msgctxtStartRgx,
   msgidStartRgx,
+  msgidPluralStartRgx,
   msgstrStartRgx,
+  msgstrPluralStartRgx,
   continuationLineRgx,
 } from "./regex";
 
@@ -157,11 +159,11 @@ export class MessageParser {
   private currentMessageStart(): vscode.TextLine {
     let startLine: vscode.TextLine | null = null;
 
-    const msgstrPluralRgx = /^msgstr\[(\d+)\]\s+"(.*?)"\s*$/;
     // go backwards to msgid definition
     for (const line of backwardDocumentLines(this.document, this.currentline)) {
       if (
-        (msgstrStartRgx.test(line.text) || msgstrPluralRgx.test(line.text)) &&
+        (msgstrStartRgx.test(line.text) ||
+          msgstrPluralStartRgx.test(line.text)) &&
         startLine !== null
       ) {
         // we hit a msgstr but we already hit a msgid definition, it means
@@ -171,15 +173,14 @@ export class MessageParser {
       }
 
       const isComment = line.text && line.text.trim().startsWith("#");
-      const msgidPluralRgx = /^msgid_plural\s+"(.*?)"\s*$/;
 
       if (
         isComment ||
         msgctxtStartRgx.test(line.text) ||
         msgidStartRgx.test(line.text) ||
         msgstrStartRgx.test(line.text) ||
-        msgidPluralRgx.test(line.text) ||
-        msgstrPluralRgx.test(line.text)
+        msgidPluralStartRgx.test(line.text) ||
+        msgstrPluralStartRgx.test(line.text)
       ) {
         startLine = line;
       }
