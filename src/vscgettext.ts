@@ -8,6 +8,8 @@ import {
   moveToPreviousUntranslatedMessage,
   moveToNextFuzzyMessage,
   moveToPreviousFuzzyMessage,
+  moveToNextUntranslatedOrFuzzyMessage,
+  moveToPreviousUntranslatedOrFuzzyMessage,
 } from "./lib";
 import provideDefinition from "./provide_definition";
 
@@ -39,13 +41,13 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerTextEditorCommand(
       "vscgettext.moveToNextUntranslatedOrFuzzy",
-      moveToNextUntranslatedMessage
+      moveToNextUntranslatedOrFuzzyMessage
     )
   );
   context.subscriptions.push(
     vscode.commands.registerTextEditorCommand(
       "vscgettext.moveToPreviousUntranslatedOrFuzzy",
-      moveToPreviousUntranslatedMessage
+      moveToPreviousUntranslatedOrFuzzyMessage
     )
   );
   context.subscriptions.push(
