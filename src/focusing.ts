@@ -4,7 +4,11 @@ import { moveCursorTo } from "./moving";
 
 export function focusOnNextTarget(
   editor: vscode.TextEditor,
-  nextTargetFunc: Function,
+  nextTargetFunc: (
+    editor: vscode.TextDocument,
+    lineno: number,
+    backwards: boolean
+  ) => Message,
   backwards = false
 ) {
   const position = editor.selection.active;
