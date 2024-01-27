@@ -46,3 +46,8 @@ msgid "apple"
 msgid_plural "apples"
 msgstr[0] ""
 msgstr[1] ""
+
+msgid "banana"
+msgid_plural "bananas"
+msgstr[0] "banano"
+msgstr[1] ""

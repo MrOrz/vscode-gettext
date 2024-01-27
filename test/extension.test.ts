@@ -60,10 +60,10 @@ suite("vscode-gettext tests", () => {
     openFile(inputpath("messages.po"))
       .then((editor) => {
         // put the cursor somewhere in the file
-        moveCursorTo(editor, 48, 0);
+        moveCursorTo(editor, 53, 0);
         // move to next untranslated message and check new position
         vscgettext.moveToNextUntranslatedMessage(editor);
-        assertCursorAt(editor, 48, 0);
+        assertCursorAt(editor, 53, 0);
       })
       .then(done, done);
   });
@@ -124,6 +124,30 @@ suite("vscode-gettext tests", () => {
         // move to next untranslated singular message and check new position
         vscgettext.moveToNextUntranslatedMessage(editor);
         assertCursorAt(editor, 46, 11);
+      })
+      .then(done, done);
+  });
+
+  test("jump to the previous untranslated singular message", (done) => {
+    openFile(inputpath("messages.po"))
+      .then((editor) => {
+        // put the cursor somewhere in the file
+        moveCursorTo(editor, 48, 0);
+        // move to next untranslated singular message and check new position
+        vscgettext.moveToPreviousUntranslatedMessage(editor);
+        assertCursorAt(editor, 46, 11);
+      })
+      .then(done, done);
+  });
+
+  test("jump to the next untranslated plural message", (done) => {
+    openFile(inputpath("messages.po"))
+      .then((editor) => {
+        // put the cursor on the first untranslated plural message
+        moveCursorTo(editor, 48, 0);
+        // move to next untranslated plural message and check new position
+        vscgettext.moveToNextUntranslatedMessage(editor);
+        assertCursorAt(editor, 52, 11);
       })
       .then(done, done);
   });

@@ -32,7 +32,7 @@ function msgstrPosition(message: Message): [number, number] {
     if (!message.msgstrPlural[index]) {
       return index === 0
         ? [line, 11]
-        : [line, 10 + Math.floor(Math.log10(index))];
+        : [line, 11 + Math.floor(Math.log10(index))];
     }
   }
 
