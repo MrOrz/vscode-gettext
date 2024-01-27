@@ -8,13 +8,7 @@ export function nextUntranslatedMessage(
   lineno: number,
   backwards = false
 ): Message {
-  return nextMessageWithCondition(
-    document,
-    lineno,
-    (message: Message) =>
-      !message.msgstr || message.msgstrPlural.some((s: string) => !s),
-    backwards
-  );
+  return nextMessageWithCondition(document, lineno, isUntranslated, backwards);
 }
 
 export function nextFuzzyMessage(
@@ -38,10 +32,7 @@ export function nextUntranslatedOrFuzzyMessage(
   return nextMessageWithCondition(
     document,
     lineno,
-    (message: Message) =>
-      !message.msgstr ||
-      message.msgstrPlural.some((s: string) => !s) ||
-      message.isfuzzy,
+    (message: Message) => isUntranslated(message) || message.isfuzzy,
     backwards
   );
 }
@@ -92,4 +83,17 @@ function previousMessage(
 
 function parseMessage(document: vscode.TextDocument, lineno: number): Message {
   return new MessageParser(document, lineno).parse();
+}
+
+function isUntranslated(message: Message): boolean {
+  return !isTranslated(message);
+}
+
+function isTranslated(message: Message): boolean {
+  return (
+    (message.msgstr && message.msgstr !== "") ||
+    (message.msgstrPlural &&
+      message.msgstrPlural.length > 0 &&
+      message.msgstrPlural.every((msgstr) => msgstr !== ""))
+  );
 }

@@ -161,11 +161,7 @@ export class MessageParser {
 
     // go backwards to msgid definition
     for (const line of backwardDocumentLines(this.document, this.currentline)) {
-      if (
-        (msgstrStartRgx.test(line.text) ||
-          msgstrPluralStartRgx.test(line.text)) &&
-        startLine !== null
-      ) {
+      if (line.text === "" && startLine !== null) {
         // we hit a msgstr but we already hit a msgid definition, it means
         // that we've reached another message definition, return the line of
         // the msgid hit.
