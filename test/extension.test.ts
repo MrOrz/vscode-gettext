@@ -6,7 +6,7 @@ import { assert } from "chai";
 import { join as pathjoin } from "path";
 
 import * as vscode from "vscode";
-import * as vscgettext from "../src/vscgettext";
+import * as vscgettext from "../src/lib";
 
 function inputpath(basename: string): string {
   return pathjoin(__dirname, "..", "..", "test", "inputfiles", basename);
