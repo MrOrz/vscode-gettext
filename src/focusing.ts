@@ -19,9 +19,22 @@ export function focusOnNextTarget(
 }
 
 function focusOnMessage(editor: vscode.TextEditor, message: Message) {
-  const position = moveCursorTo(editor, message.msgstrLine, 8);
+  const [line, character] = msgstrPosition(message);
+  const position = moveCursorTo(editor, line, character);
   editor.revealRange(
     new vscode.Range(position, position),
     vscode.TextEditorRevealType.InCenterIfOutsideViewport
   );
+}
+
+function msgstrPosition(message: Message): [number, number] {
+  for (const [index, line] of message.msgstrPluralLine.entries()) {
+    if (!message.msgstrPlural[index]) {
+      return index === 0
+        ? [line, 11]
+        : [line, 10 + Math.floor(Math.log10(index))];
+    }
+  }
+
+  return [message.msgstrLine, 8];
 }

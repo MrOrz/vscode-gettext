@@ -11,7 +11,8 @@ export function nextUntranslatedMessage(
   return nextMessageWithCondition(
     document,
     lineno,
-    (message) => !message.msgstr,
+    (message: Message) =>
+      !message.msgstr || message.msgstrPlural.some((s: string) => !s),
     backwards
   );
 }
@@ -24,7 +25,7 @@ export function nextFuzzyMessage(
   return nextMessageWithCondition(
     document,
     lineno,
-    (message) => message.isfuzzy,
+    (message: Message) => message.isfuzzy,
     backwards
   );
 }

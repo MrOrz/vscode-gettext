@@ -20,8 +20,12 @@ export class MessageParser {
     this.message = {
       msgid: null,
       msgidLine: null,
+      msgidPlural: null,
+      msgidPluralLine: null,
       msgstr: null,
       msgstrLine: null,
+      msgstrPlural: null,
+      msgstrPluralLine: null,
       msgctxt: null,
       msgctxtLine: null,
       firstline: null,
@@ -42,7 +46,9 @@ export class MessageParser {
     this.parseComments();
     this.parseMsgctxt();
     this.parseMsgid();
+    this.parseMsgidPlural();
     this.parseMsgstr();
+    this.parseMsgstrPlural();
 
     return this.message;
   }
@@ -63,35 +69,84 @@ export class MessageParser {
 
   private parseMsgctxt() {
     this.message.msgctxt = "";
-    this.parseWithKey("msgctxt", (value) => (this.message.msgctxt += value));
+    this.parseWithKey(
+      "msgctxt",
+      (value) => (this.message.msgctxt += value),
+      (value) => (this.message.msgctxtLine = value)
+    );
   }
 
   private parseMsgid() {
     this.message.msgid = "";
-    this.parseWithKey("msgid", (value) => (this.message.msgid += value));
+    this.parseWithKey(
+      "msgid",
+      (value) => (this.message.msgid += value),
+      (value) => (this.message.msgidLine = value)
+    );
+  }
+
+  private parseMsgidPlural() {
+    this.message.msgidPlural = "";
+    this.parseWithKey(
+      "msgid_plural",
+      (value) => (this.message.msgidPlural += value),
+      (value) => (this.message.msgidPluralLine = value)
+    );
   }
 
   private parseMsgstr() {
     this.message.msgstr = "";
-    this.parseWithKey("msgstr", (value) => (this.message.msgstr += value));
+    this.parseWithKey(
+      "msgstr",
+      (value) => (this.message.msgstr += value),
+      (value) => (this.message.msgstrLine = value)
+    );
   }
 
-  private parseWithKey(key: string, setter: (value: string) => void) {
+  private parseMsgstrPlural() {
+    this.message.msgstrPlural = [];
+    this.message.msgstrPluralLine = [];
+
+    for (let index = 0; ; index++) {
+      const key = `msgstr[${index}]`;
+      const lastline = this.message.lastline;
+
+      this.parseWithKey(
+        key,
+        (value) => {
+          this.message.msgstrPlural[index] ||= "";
+          this.message.msgstrPlural[index] += value;
+        },
+        (value) => (this.message.msgstrPluralLine[index] = value)
+      );
+
+      if (this.message.lastline === lastline) {
+        break;
+      }
+    }
+  }
+
+  private parseWithKey(
+    key: string,
+    valueSetter: (value: string) => void,
+    lineNumberSetter: (value: number) => void
+  ) {
+    key = key.replace(/[\[\]]/g, "\\$&");
     const regex = new RegExp(`^${key}\\s+"(.*)"$`);
 
-    let firstLine = this.document.lineAt(this.message.lastline);
+    const firstLine = this.document.lineAt(this.message.lastline);
 
     if (!regex.test(firstLine.text)) {
       return;
     }
 
-    setter(regex.exec(firstLine.text)[1]);
-    this.message.msgstrLine = firstLine.lineNumber;
+    valueSetter(regex.exec(firstLine.text)[1]);
+    lineNumberSetter(firstLine.lineNumber);
     this.message.lastline++;
 
     for (const line of documentLines(this.document, this.message.lastline)) {
       if (continuationLineRgx.test(line.text)) {
-        setter(continuationLineRgx.exec(line.text)[1]);
+        valueSetter(continuationLineRgx.exec(line.text)[1]);
         this.message.lastline++;
       } else {
         return;
@@ -100,11 +155,15 @@ export class MessageParser {
   }
 
   private currentMessageStart(): vscode.TextLine {
-    let startLine = null;
+    let startLine: vscode.TextLine | null = null;
 
+    const msgstrPluralRgx = /^msgstr\[(\d+)\]\s+"(.*?)"\s*$/;
     // go backwards to msgid definition
     for (const line of backwardDocumentLines(this.document, this.currentline)) {
-      if (msgstrStartRgx.test(line.text) && startLine !== null) {
+      if (
+        (msgstrStartRgx.test(line.text) || msgstrPluralRgx.test(line.text)) &&
+        startLine !== null
+      ) {
         // we hit a msgstr but we already hit a msgid definition, it means
         // that we've reached another message definition, return the line of
         // the msgid hit.
@@ -112,12 +171,15 @@ export class MessageParser {
       }
 
       const isComment = line.text && line.text.trim().startsWith("#");
+      const msgidPluralRgx = /^msgid_plural\s+"(.*?)"\s*$/;
 
       if (
         isComment ||
         msgctxtStartRgx.test(line.text) ||
         msgidStartRgx.test(line.text) ||
-        msgstrStartRgx.test(line.text)
+        msgstrStartRgx.test(line.text) ||
+        msgidPluralRgx.test(line.text) ||
+        msgstrPluralRgx.test(line.text)
       ) {
         startLine = line;
       }

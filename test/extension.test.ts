@@ -60,10 +60,10 @@ suite("vscode-gettext tests", () => {
     openFile(inputpath("messages.po"))
       .then((editor) => {
         // put the cursor somewhere in the file
-        moveCursorTo(editor, 42, 0);
+        moveCursorTo(editor, 48, 0);
         // move to next untranslated message and check new position
         vscgettext.moveToNextUntranslatedMessage(editor);
-        assertCursorAt(editor, 42, 0);
+        assertCursorAt(editor, 48, 0);
       })
       .then(done, done);
   });
@@ -120,10 +120,10 @@ suite("vscode-gettext tests", () => {
     openFile(inputpath("messages.po"))
       .then((editor) => {
         // put the cursor somewhere in the file
-        moveCursorTo(editor, 45, 0);
+        moveCursorTo(editor, 43, 0);
         // move to next untranslated singular message and check new position
         vscgettext.moveToNextUntranslatedMessage(editor);
-        assertCursorAt(editor, 48, 12);
+        assertCursorAt(editor, 46, 11);
       })
       .then(done, done);
   });
