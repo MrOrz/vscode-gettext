@@ -187,4 +187,28 @@ suite("vscode-gettext tests", () => {
       })
       .then(done, done);
   });
+
+  test("jump to the next untranslated or fuzzy message (untranslated)", (done) => {
+    openFile(inputpath("messages.po"))
+      .then((editor) => {
+        // put the cursor on the first untranslated message
+        moveCursorTo(editor, 10, 0);
+        // move to next untranslated or fuzzy message and check new position
+        vscgettext.moveToNextUntranslatedOrFuzzyMessage(editor);
+        assertCursorAt(editor, 20, 8);
+      })
+      .then(done, done);
+  });
+
+  test("jump to the next untranslated or fuzzy message (fuzzy)", (done) => {
+    openFile(inputpath("messages.po"))
+      .then((editor) => {
+        // put the cursor on the first fuzzy message
+        moveCursorTo(editor, 33, 0);
+        // move to next untranslated or fuzzy message and check new position
+        vscgettext.moveToNextUntranslatedOrFuzzyMessage(editor);
+        assertCursorAt(editor, 38, 8);
+      })
+      .then(done, done);
+  });
 });

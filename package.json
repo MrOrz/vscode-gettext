@@ -74,6 +74,16 @@
                 "command": "vscgettext.moveToPreviousFuzzy",
                 "key": "alt+shift+f",
                 "when": "editorTextFocus && resourceLangId == po"
+            },
+            {
+                "command": "vscgettext.moveToNextUntranslatedOrFuzzy",
+                "key": "alt+u",
+                "when": "editorTextFocus && resourceLangId == po"
+            },
+            {
+                "command": "vscgettext.moveToPreviousUntranslatedOrFuzzy",
+                "key": "alt+shift+u",
+                "when": "editorTextFocus && resourceLangId == po"
             }
         ]
     },

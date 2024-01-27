@@ -37,6 +37,18 @@ export function activate(context: vscode.ExtensionContext) {
     )
   );
   context.subscriptions.push(
+    vscode.commands.registerTextEditorCommand(
+      "vscgettext.moveToNextUntranslatedOrFuzzy",
+      moveToNextUntranslatedMessage
+    )
+  );
+  context.subscriptions.push(
+    vscode.commands.registerTextEditorCommand(
+      "vscgettext.moveToPreviousUntranslatedOrFuzzy",
+      moveToPreviousUntranslatedMessage
+    )
+  );
+  context.subscriptions.push(
     vscode.languages.registerDefinitionProvider("po", { provideDefinition })
   );
 }

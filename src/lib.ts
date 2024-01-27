@@ -1,5 +1,9 @@
 import * as vscode from "vscode";
-import { nextFuzzyMessage, nextUntranslatedMessage } from "./message";
+import {
+  nextFuzzyMessage,
+  nextUntranslatedMessage,
+  nextUntranslatedOrFuzzyMessage,
+} from "./message";
 import { focusOnNextTarget } from "./focusing";
 
 export function moveToNextUntranslatedMessage(editor: vscode.TextEditor) {
@@ -16,4 +20,16 @@ export function moveToNextFuzzyMessage(editor: vscode.TextEditor) {
 
 export function moveToPreviousFuzzyMessage(editor: vscode.TextEditor) {
   focusOnNextTarget(editor, nextFuzzyMessage, true);
+}
+
+export function moveToNextUntranslatedOrFuzzyMessage(
+  editor: vscode.TextEditor
+) {
+  focusOnNextTarget(editor, nextUntranslatedOrFuzzyMessage);
+}
+
+export function moveToPreviousUntranslatedOrFuzzyMessage(
+  editor: vscode.TextEditor
+) {
+  focusOnNextTarget(editor, nextUntranslatedOrFuzzyMessage, true);
 }

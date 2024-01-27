@@ -30,6 +30,22 @@ export function nextFuzzyMessage(
   );
 }
 
+export function nextUntranslatedOrFuzzyMessage(
+  document: vscode.TextDocument,
+  lineno: number,
+  backwards = false
+): Message {
+  return nextMessageWithCondition(
+    document,
+    lineno,
+    (message: Message) =>
+      !message.msgstr ||
+      message.msgstrPlural.some((s: string) => !s) ||
+      message.isfuzzy,
+    backwards
+  );
+}
+
 function nextMessageWithCondition(
   document: vscode.TextDocument,
   lineno: number,
