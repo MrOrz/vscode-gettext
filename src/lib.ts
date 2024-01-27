@@ -1,16 +1,12 @@
 import * as vscode from "vscode";
 import { Message } from "./message";
-
-const fuzzyRgx = /^#, fuzzy/;
-
-function regexWithKey(key: string) {
-  return new RegExp(`^${key}\\s+"(.*?)"\\s*$`);
-}
-
-const msgctxtStartRgx = regexWithKey("msgctxt");
-const msgidStartRgx = regexWithKey("msgid");
-const msgstrStartRgx = regexWithKey("msgstr");
-const continuationLineRgx = /^"(.*?)\s*"$/;
+import {
+  fuzzyRgx,
+  msgctxtStartRgx,
+  msgidStartRgx,
+  msgstrStartRgx,
+  continuationLineRgx,
+} from "./regex";
 
 export function moveCursorTo(
   editor: vscode.TextEditor,
