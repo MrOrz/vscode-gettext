@@ -42,7 +42,6 @@ jobs:
         with:
           pat: ${{ secrets.OPEN_VSX_TOKEN }}
           extensionFile: ${{ needs.build.outputs.vsixPath }}
-          skipDuplicate: true
 
   publish-to-vs-marketplace:
     runs-on: ubuntu-latest
@@ -57,4 +56,3 @@ jobs:
           pat: ${{ secrets.VS_MARKETPLACE_TOKEN }}
           registryUrl: https://marketplace.visualstudio.com
           extensionFile: ${{ needs.build.outputs.vsixPath }}
-          skipDuplicate: true
