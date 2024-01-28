@@ -38,6 +38,30 @@ msgstr ""
 msgid "new text"
 msgstr "old translation"
 
+msgid "foo"
+msgid_plural "foos"
+msgstr[0] "foo"
+msgstr[1] "foos"
+
 msgctxt "Person"
 msgid "agent_type"
 msgstr ""
+
+msgid "apple"
+msgid_plural "apples"
+msgstr[0] ""
+msgstr[1] ""
+
+msgid "banana"
+msgid_plural "bananas"
+msgstr[0] "banano"
+msgstr[1] ""
+
+#, fuzzy
+#| msgid "anime"
+msgid "manga"
+msgid_plural "mangas"
+msgstr[0] "animeo"
+
+msgid "msg"
+msgstr "msgstr"

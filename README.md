@@ -12,3 +12,5 @@ Source tmLanguage file: https://github.com/textmate/gettext.tmbundle/blob/master
 * `vscgettext.moveToPreviousUntranslated`: Move focus to previous untranslated message (`alt+shift+n`)
 * `vscgettext.moveToNextFuzzy`: Move focus to next fuzzy message (`alt+f`)
 * `vscgettext.moveToPreviousFuzzy`: Move focus to previous fuzzy message (`alt+shift+f`)
+* `vscgettext.moveToNextUntranslatedOrFuzzy`: Move focus to next untranslated or fuzzy message (`alt+u`)
+* `vscgettext.moveToPreviousUntranslatedOrFuzzy`: Move focus to previous untranslated or fuzzy message (`alt+shift+u`)
