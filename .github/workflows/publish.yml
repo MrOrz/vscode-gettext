@@ -38,7 +38,6 @@ jobs:
         with:
           name: vsix
       - uses: HaaLeo/publish-vscode-extension@v1
-        id: publishToOpenVSX
         with:
           pat: ${{ secrets.OPEN_VSX_TOKEN }}
           extensionFile: ${{ needs.build.outputs.vsixPath }}
