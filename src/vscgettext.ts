@@ -12,8 +12,9 @@ import {
   moveToPreviousUntranslatedOrFuzzyMessage,
 } from "./lib";
 import provideDefinition from "./provide_definition";
+import { activateStatusBar } from "./status";
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerTextEditorCommand(
       "vscgettext.moveToNextUntranslated",
@@ -53,6 +54,8 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.languages.registerDefinitionProvider("po", { provideDefinition })
   );
+
+  activateStatusBar(context);
 }
 
 export function deactivate() {
