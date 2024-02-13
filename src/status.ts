@@ -22,11 +22,22 @@ export async function activateStatusBar({
 }
 
 async function updateStsatusBarmItem(): Promise<void> {
-  statusBarItem.text = await runMsgfmtStatistics();
+  const output = await runMsgfmtStatistics();
+
+  if (output) {
+    statusBarItem.text = output;
+    statusBarItem.show();
+  } else {
+    statusBarItem.hide();
+  }
 }
 
-async function runMsgfmtStatistics(): Promise<string> {
+async function runMsgfmtStatistics(): Promise<string | null> {
   const path = vscode.window.activeTextEditor?.document.uri.fsPath;
+
+  if (!path) {
+    return null;
+  }
 
   const command = `msgfmt --statistics -o /dev/null ${path}`;
 
