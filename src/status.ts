@@ -15,13 +15,13 @@ export async function activateStatusBar({
   subscriptions.push(statusBarItem);
 
   subscriptions.push(
-    vscode.window.onDidChangeActiveTextEditor(updateStsatusBarmItem)
+    vscode.window.onDidChangeActiveTextEditor(updateStsatusBarItem)
   );
 
-  updateStsatusBarmItem();
+  updateStsatusBarItem();
 }
 
-async function updateStsatusBarmItem(): Promise<void> {
+async function updateStsatusBarItem(): Promise<void> {
   const output = await runMsgfmtStatistics();
 
   if (output) {
