@@ -24,10 +24,17 @@ export async function activateStatusBar({
 async function updateStsatusBarItem(): Promise<void> {
   const output = await runMsgfmtStatistics();
 
-  if (output) {
-    statusBarItem.text = output;
-    statusBarItem.show();
-  } else {
+  try {
+    if (output) {
+      statusBarItem.text = output;
+
+      statusBarItem.show();
+    } else {
+      statusBarItem.hide();
+    }
+  } catch (error) {
+    console.error(error);
+
     statusBarItem.hide();
   }
 }
@@ -44,9 +51,7 @@ async function runMsgfmtStatistics(): Promise<string | null> {
   return new Promise((resolve, reject) => {
     exec(command, (error, stdout, stderr) => {
       if (error) {
-        console.error(stderr);
-
-        reject(error);
+        reject(new Error(`Failed to run msgfmt: ${error.message}`));
       } else {
         // Correct. The command will print the statistics to stderr.
         resolve(stderr);
