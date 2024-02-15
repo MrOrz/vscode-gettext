@@ -43,12 +43,14 @@ async function runMsgfmtStatistics(): Promise<string | null> {
 
   return new Promise((resolve, reject) => {
     exec(command, (error, stdout, stderr) => {
-      console.log("error: ", error);
-      console.log("stdout: ", stdout);
-      console.log("stderr: ", stderr);
+      if (error) {
+        console.error(stderr);
 
-      // Correct. The command will print the statistics to stderr.
-      resolve(stderr);
+        reject(error);
+      } else {
+        // Correct. The command will print the statistics to stderr.
+        resolve(stderr);
+      }
     });
   });
 }
