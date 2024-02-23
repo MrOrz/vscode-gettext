@@ -8,6 +8,7 @@ Source tmLanguage file: https://github.com/textmate/gettext.tmbundle/blob/master
 
 ## Features
 
+* Show the number of total messages, untranslated messages, and fuzzy messages in the status bar via `msgfmt --statistics`.
 * `vscgettext.moveToNextUntranslated`: Move focus to next untranslated message (`alt+n`)
 * `vscgettext.moveToPreviousUntranslated`: Move focus to previous untranslated message (`alt+shift+n`)
 * `vscgettext.moveToNextFuzzy`: Move focus to next fuzzy message (`alt+f`)
