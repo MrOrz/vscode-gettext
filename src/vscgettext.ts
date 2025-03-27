@@ -12,6 +12,7 @@ import {
   moveToPreviousUntranslatedOrFuzzyMessage,
 } from "./lib";
 import provideDefinition from "./provide_definition";
+import { provideDocumentFormattingEdits } from "./formatting";
 import { activateStatusBar } from "./status";
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -53,6 +54,12 @@ export async function activate(context: vscode.ExtensionContext) {
   );
   context.subscriptions.push(
     vscode.languages.registerDefinitionProvider("po", { provideDefinition })
+  );
+
+  context.subscriptions.push(
+    vscode.languages.registerDocumentFormattingEditProvider("po", {
+      provideDocumentFormattingEdits,
+    })
   );
 
   activateStatusBar(context);

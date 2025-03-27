@@ -51,6 +51,7 @@ async function runMsgfmtStatistics(): Promise<string | null> {
   return new Promise((resolve, reject) => {
     exec(command, (error, stdout, stderr) => {
       if (error) {
+        vscode.window.showErrorMessage(`Failed to run msgfmt: ${stderr}`);
         reject(new Error(`Failed to run msgfmt: ${error.message}`));
       } else {
         // Correct. The command will print the statistics to stderr.
